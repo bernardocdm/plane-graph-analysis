@@ -4,136 +4,136 @@
   "graph": {},
   "nodes": [
     {
-      "avatar_url": "https://avatars.githubusercontent.com/u/000000",
-      "user_type": "User",
-      "contributions": 16,
-      "in_degree": 1.0,
-      "out_degree": 0.7000000000000001,
-      "betweenness": 0.018439153439153443,
-      "closeness": 1.0,
-      "pagerank": 0.13511994487677426,
-      "community": 0,
-      "id": "anonymous-coder"
-    },
-    {
-      "avatar_url": "https://avatars.githubusercontent.com/u/13275653",
-      "user_type": "User",
-      "contributions": 25,
-      "in_degree": 0.9,
-      "out_degree": 0.8,
-      "betweenness": 0.03232804232804233,
-      "closeness": 0.9090909090909091,
-      "pagerank": 0.14721894945821615,
-      "community": 0,
-      "id": "tiangolo"
-    },
-    {
-      "avatar_url": "https://avatars.githubusercontent.com/u/647385",
-      "user_type": "User",
-      "contributions": 18,
-      "in_degree": 1.0,
-      "out_degree": 0.9,
-      "betweenness": 0.05362433862433862,
-      "closeness": 1.0,
-      "pagerank": 0.12841850402312752,
-      "community": 1,
-      "id": "tomchristie"
-    },
-    {
-      "avatar_url": "https://avatars.githubusercontent.com/u/7362854",
-      "user_type": "User",
-      "contributions": 21,
-      "in_degree": 0.0,
-      "out_degree": 0.9,
-      "betweenness": 0.0,
-      "closeness": 0.0,
-      "pagerank": 0.01363636363636364,
-      "community": 1,
-      "id": "Kludex"
-    },
-    {
-      "avatar_url": "https://avatars.githubusercontent.com/u/328220",
-      "user_type": "User",
-      "contributions": 13,
-      "in_degree": 0.5,
-      "out_degree": 0.8,
-      "betweenness": 0.007142857142857143,
-      "closeness": 0.6666666666666666,
-      "pagerank": 0.04833668481339396,
-      "community": 0,
-      "id": "bueltge"
-    },
-    {
-      "avatar_url": "https://avatars.githubusercontent.com/u/7891011",
-      "user_type": "User",
-      "contributions": 9,
-      "in_degree": 0.4,
-      "out_degree": 0.5,
-      "betweenness": 0.0034391534391534392,
-      "closeness": 0.625,
-      "pagerank": 0.05260781012990257,
-      "community": 0,
-      "id": "bernardo-cdm"
-    },
-    {
-      "avatar_url": "https://avatars.githubusercontent.com/u/4660274",
-      "user_type": "User",
-      "contributions": 14,
-      "in_degree": 0.8,
-      "out_degree": 0.8,
-      "betweenness": 0.021402116402116405,
-      "closeness": 0.8333333333333334,
-      "pagerank": 0.08503880519183062,
-      "community": 0,
-      "id": "sobolevn"
-    },
-    {
-      "avatar_url": "https://avatars.githubusercontent.com/u/1271183",
-      "user_type": "User",
-      "contributions": 16,
-      "in_degree": 0.8,
-      "out_degree": 0.7000000000000001,
-      "betweenness": 0.02962962962962963,
-      "closeness": 0.8333333333333334,
-      "pagerank": 0.11853520764056735,
-      "community": 1,
-      "id": "euri10"
-    },
-    {
       "avatar_url": "https://avatars.githubusercontent.com/u/123456",
       "user_type": "User",
-      "contributions": 9,
+      "contributions": 15,
       "in_degree": 0.8,
-      "out_degree": 0.6000000000000001,
-      "betweenness": 0.021296296296296296,
+      "out_degree": 0.7000000000000001,
+      "betweenness": 0.015370370370370373,
       "closeness": 0.8333333333333334,
-      "pagerank": 0.0952030083537828,
+      "pagerank": 0.12997690711436471,
       "community": 0,
       "id": "matheus-soares"
     },
     {
-      "avatar_url": "https://avatars.githubusercontent.com/u/232162",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7891011",
       "user_type": "User",
-      "contributions": 12,
-      "in_degree": 0.9,
+      "contributions": 18,
+      "in_degree": 0.7000000000000001,
+      "out_degree": 0.7000000000000001,
+      "betweenness": 0.015370370370370373,
+      "closeness": 0.7692307692307693,
+      "pagerank": 0.07681932733675187,
+      "community": 2,
+      "id": "bernardo-cdm"
+    },
+    {
+      "avatar_url": "https://avatars.githubusercontent.com/u/1271183",
+      "user_type": "User",
+      "contributions": 15,
+      "in_degree": 1.0,
       "out_degree": 0.6000000000000001,
-      "betweenness": 0.019920634920634922,
-      "closeness": 0.9090909090909091,
-      "pagerank": 0.08029722383657326,
-      "community": 1,
-      "id": "samuelcolvin"
+      "betweenness": 0.028333333333333332,
+      "closeness": 1.0,
+      "pagerank": 0.12522758221234276,
+      "community": 0,
+      "id": "euri10"
+    },
+    {
+      "avatar_url": "https://avatars.githubusercontent.com/u/4660274",
+      "user_type": "User",
+      "contributions": 13,
+      "in_degree": 0.8,
+      "out_degree": 0.5,
+      "betweenness": 0.026296296296296293,
+      "closeness": 0.8333333333333334,
+      "pagerank": 0.1107023572821384,
+      "community": 0,
+      "id": "sobolevn"
+    },
+    {
+      "avatar_url": "https://avatars.githubusercontent.com/u/328220",
+      "user_type": "User",
+      "contributions": 11,
+      "in_degree": 0.2,
+      "out_degree": 0.7000000000000001,
+      "betweenness": 0.011111111111111112,
+      "closeness": 0.5555555555555556,
+      "pagerank": 0.03188251416489644,
+      "community": 2,
+      "id": "bueltge"
     },
     {
       "avatar_url": "https://avatars.githubusercontent.com/u/3511177",
       "user_type": "User",
-      "contributions": 24,
-      "in_degree": 0.9,
-      "out_degree": 0.7000000000000001,
-      "betweenness": 0.015,
-      "closeness": 0.9090909090909091,
-      "pagerank": 0.09558749803946791,
+      "contributions": 27,
+      "in_degree": 0.5,
+      "out_degree": 0.8,
+      "betweenness": 0.01,
+      "closeness": 0.6666666666666666,
+      "pagerank": 0.04938727577875933,
       "community": 0,
       "id": "dmontagu"
+    },
+    {
+      "avatar_url": "https://avatars.githubusercontent.com/u/000000",
+      "user_type": "User",
+      "contributions": 14,
+      "in_degree": 0.9,
+      "out_degree": 0.7000000000000001,
+      "betweenness": 0.034074074074074076,
+      "closeness": 0.9090909090909091,
+      "pagerank": 0.1053346598485855,
+      "community": 2,
+      "id": "anonymous-coder"
+    },
+    {
+      "avatar_url": "https://avatars.githubusercontent.com/u/7362854",
+      "user_type": "User",
+      "contributions": 25,
+      "in_degree": 1.0,
+      "out_degree": 1.0,
+      "betweenness": 0.14166666666666664,
+      "closeness": 1.0,
+      "pagerank": 0.184407355819818,
+      "community": 1,
+      "id": "Kludex"
+    },
+    {
+      "avatar_url": "https://avatars.githubusercontent.com/u/13275653",
+      "user_type": "User",
+      "contributions": 26,
+      "in_degree": 0.6000000000000001,
+      "out_degree": 0.8,
+      "betweenness": 0.0337037037037037,
+      "closeness": 0.7142857142857143,
+      "pagerank": 0.0599187953918404,
+      "community": 1,
+      "id": "tiangolo"
+    },
+    {
+      "avatar_url": "https://avatars.githubusercontent.com/u/232162",
+      "user_type": "User",
+      "contributions": 11,
+      "in_degree": 0.30000000000000004,
+      "out_degree": 0.8,
+      "betweenness": 0.011851851851851853,
+      "closeness": 0.5882352941176471,
+      "pagerank": 0.04402018193374203,
+      "community": 2,
+      "id": "samuelcolvin"
+    },
+    {
+      "avatar_url": "https://avatars.githubusercontent.com/u/647385",
+      "user_type": "User",
+      "contributions": 10,
+      "in_degree": 0.9,
+      "out_degree": 0.4,
+      "betweenness": 0.03888888888888889,
+      "closeness": 0.9090909090909091,
+      "pagerank": 0.0823230431167604,
+      "community": 1,
+      "id": "tomchristie"
     }
   ],
   "links": [
@@ -141,561 +141,540 @@
       "weight": 2,
       "comments": 2,
       "reviews": 0,
-      "source": "anonymous-coder",
-      "target": "samuelcolvin"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "anonymous-coder",
-      "target": "dmontagu"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "anonymous-coder",
-      "target": "tiangolo"
-    },
-    {
-      "weight": 3,
-      "comments": 3,
-      "reviews": 0,
-      "source": "anonymous-coder",
-      "target": "euri10"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "anonymous-coder",
-      "target": "matheus-soares"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "anonymous-coder",
-      "target": "sobolevn"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "anonymous-coder",
-      "target": "tomchristie"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "tiangolo",
-      "target": "anonymous-coder"
-    },
-    {
-      "weight": 4,
-      "comments": 2,
-      "reviews": 2,
-      "source": "tiangolo",
-      "target": "tomchristie"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "tiangolo",
-      "target": "dmontagu"
-    },
-    {
-      "weight": 3,
-      "comments": 0,
-      "reviews": 3,
-      "source": "tiangolo",
-      "target": "matheus-soares"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "tiangolo",
-      "target": "bueltge"
-    },
-    {
-      "weight": 3,
-      "comments": 2,
-      "reviews": 1,
-      "source": "tiangolo",
-      "target": "euri10"
-    },
-    {
-      "weight": 2,
-      "comments": 0,
-      "reviews": 2,
-      "source": "tiangolo",
-      "target": "sobolevn"
-    },
-    {
-      "weight": 1,
-      "comments": 0,
-      "reviews": 1,
-      "source": "tiangolo",
-      "target": "samuelcolvin"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "tomchristie",
-      "target": "anonymous-coder"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "tomchristie",
-      "target": "tiangolo"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "tomchristie",
-      "target": "sobolevn"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "tomchristie",
-      "target": "dmontagu"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "tomchristie",
-      "target": "bueltge"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "tomchristie",
+      "source": "matheus-soares",
       "target": "bernardo-cdm"
     },
     {
       "weight": 2,
       "comments": 2,
       "reviews": 0,
-      "source": "tomchristie",
+      "source": "matheus-soares",
+      "target": "anonymous-coder"
+    },
+    {
+      "weight": 3,
+      "comments": 3,
+      "reviews": 0,
+      "source": "matheus-soares",
+      "target": "Kludex"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "matheus-soares",
+      "target": "sobolevn"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "matheus-soares",
+      "target": "tomchristie"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "matheus-soares",
+      "target": "tiangolo"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "matheus-soares",
+      "target": "euri10"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "bernardo-cdm",
+      "target": "matheus-soares"
+    },
+    {
+      "weight": 4,
+      "comments": 4,
+      "reviews": 0,
+      "source": "bernardo-cdm",
+      "target": "euri10"
+    },
+    {
+      "weight": 3,
+      "comments": 3,
+      "reviews": 0,
+      "source": "bernardo-cdm",
+      "target": "sobolevn"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "bernardo-cdm",
+      "target": "Kludex"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "bernardo-cdm",
+      "target": "tomchristie"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "bernardo-cdm",
+      "target": "tiangolo"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "bernardo-cdm",
+      "target": "anonymous-coder"
+    },
+    {
+      "weight": 3,
+      "comments": 3,
+      "reviews": 0,
+      "source": "euri10",
       "target": "matheus-soares"
     },
     {
       "weight": 1,
       "comments": 1,
       "reviews": 0,
-      "source": "tomchristie",
+      "source": "euri10",
+      "target": "bernardo-cdm"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "euri10",
+      "target": "Kludex"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "euri10",
+      "target": "tiangolo"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "euri10",
+      "target": "anonymous-coder"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "euri10",
+      "target": "tomchristie"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "sobolevn",
+      "target": "matheus-soares"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "sobolevn",
+      "target": "Kludex"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "sobolevn",
       "target": "euri10"
     },
     {
       "weight": 1,
       "comments": 1,
       "reviews": 0,
-      "source": "tomchristie",
+      "source": "sobolevn",
+      "target": "bernardo-cdm"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "sobolevn",
       "target": "samuelcolvin"
     },
     {
       "weight": 2,
       "comments": 2,
       "reviews": 0,
-      "source": "Kludex",
-      "target": "anonymous-coder"
-    },
-    {
-      "weight": 3,
-      "comments": 2,
-      "reviews": 1,
-      "source": "Kludex",
-      "target": "tiangolo"
-    },
-    {
-      "weight": 3,
-      "comments": 2,
-      "reviews": 1,
-      "source": "Kludex",
-      "target": "samuelcolvin"
+      "source": "bueltge",
+      "target": "bernardo-cdm"
     },
     {
       "weight": 1,
       "comments": 1,
       "reviews": 0,
-      "source": "Kludex",
+      "source": "bueltge",
       "target": "dmontagu"
     },
     {
-      "weight": 4,
-      "comments": 0,
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "bueltge",
+      "target": "Kludex"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "bueltge",
+      "target": "anonymous-coder"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "bueltge",
+      "target": "euri10"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "bueltge",
+      "target": "sobolevn"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "bueltge",
+      "target": "tomchristie"
+    },
+    {
+      "weight": 2,
+      "comments": 1,
+      "reviews": 1,
+      "source": "dmontagu",
+      "target": "anonymous-coder"
+    },
+    {
+      "weight": 8,
+      "comments": 4,
       "reviews": 4,
-      "source": "Kludex",
-      "target": "tomchristie"
+      "source": "dmontagu",
+      "target": "Kludex"
     },
     {
-      "weight": 1,
+      "weight": 2,
       "comments": 1,
-      "reviews": 0,
-      "source": "Kludex",
-      "target": "bueltge"
-    },
-    {
-      "weight": 4,
-      "comments": 2,
-      "reviews": 2,
-      "source": "Kludex",
-      "target": "euri10"
-    },
-    {
-      "weight": 1,
-      "comments": 0,
       "reviews": 1,
-      "source": "Kludex",
-      "target": "sobolevn"
-    },
-    {
-      "weight": 2,
-      "comments": 0,
-      "reviews": 2,
-      "source": "Kludex",
-      "target": "matheus-soares"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "bueltge",
-      "target": "anonymous-coder"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "bueltge",
+      "source": "dmontagu",
       "target": "tiangolo"
     },
     {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "bueltge",
-      "target": "samuelcolvin"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "bueltge",
-      "target": "dmontagu"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "bueltge",
-      "target": "tomchristie"
-    },
-    {
       "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "bueltge",
-      "target": "matheus-soares"
-    },
-    {
-      "weight": 1,
       "comments": 1,
-      "reviews": 0,
-      "source": "bueltge",
-      "target": "sobolevn"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "bueltge",
+      "reviews": 1,
+      "source": "dmontagu",
       "target": "euri10"
     },
     {
       "weight": 1,
       "comments": 1,
       "reviews": 0,
-      "source": "bernardo-cdm",
-      "target": "anonymous-coder"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "bernardo-cdm",
-      "target": "dmontagu"
-    },
-    {
-      "weight": 3,
-      "comments": 3,
-      "reviews": 0,
-      "source": "bernardo-cdm",
-      "target": "tiangolo"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "bernardo-cdm",
-      "target": "tomchristie"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "bernardo-cdm",
-      "target": "samuelcolvin"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "sobolevn",
-      "target": "anonymous-coder"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "sobolevn",
-      "target": "tomchristie"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "sobolevn",
-      "target": "samuelcolvin"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "sobolevn",
-      "target": "dmontagu"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "sobolevn",
+      "source": "dmontagu",
       "target": "bernardo-cdm"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "sobolevn",
-      "target": "tiangolo"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "sobolevn",
-      "target": "euri10"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "sobolevn",
-      "target": "matheus-soares"
-    },
-    {
-      "weight": 3,
-      "comments": 3,
-      "reviews": 0,
-      "source": "euri10",
-      "target": "tiangolo"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "euri10",
-      "target": "tomchristie"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "euri10",
-      "target": "sobolevn"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "euri10",
-      "target": "bueltge"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "euri10",
-      "target": "bernardo-cdm"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "euri10",
-      "target": "anonymous-coder"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "euri10",
-      "target": "samuelcolvin"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "matheus-soares",
-      "target": "tomchristie"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "matheus-soares",
-      "target": "bernardo-cdm"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "matheus-soares",
-      "target": "anonymous-coder"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "matheus-soares",
-      "target": "dmontagu"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "matheus-soares",
-      "target": "sobolevn"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "matheus-soares",
-      "target": "tiangolo"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "samuelcolvin",
-      "target": "dmontagu"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "samuelcolvin",
-      "target": "bueltge"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "samuelcolvin",
-      "target": "anonymous-coder"
-    },
-    {
-      "weight": 2,
-      "comments": 2,
-      "reviews": 0,
-      "source": "samuelcolvin",
-      "target": "euri10"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "samuelcolvin",
-      "target": "matheus-soares"
-    },
-    {
-      "weight": 1,
-      "comments": 1,
-      "reviews": 0,
-      "source": "samuelcolvin",
-      "target": "tomchristie"
     },
     {
       "weight": 4,
       "comments": 2,
       "reviews": 2,
       "source": "dmontagu",
-      "target": "euri10"
+      "target": "matheus-soares"
     },
     {
-      "weight": 3,
-      "comments": 1,
-      "reviews": 2,
-      "source": "dmontagu",
-      "target": "sobolevn"
-    },
-    {
-      "weight": 6,
-      "comments": 3,
+      "weight": 5,
+      "comments": 2,
       "reviews": 3,
       "source": "dmontagu",
+      "target": "sobolevn"
+    },
+    {
+      "weight": 1,
+      "comments": 0,
+      "reviews": 1,
+      "source": "dmontagu",
+      "target": "tomchristie"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "anonymous-coder",
+      "target": "dmontagu"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "anonymous-coder",
+      "target": "euri10"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "anonymous-coder",
+      "target": "matheus-soares"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "anonymous-coder",
+      "target": "Kludex"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "anonymous-coder",
+      "target": "tomchristie"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "anonymous-coder",
       "target": "tiangolo"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "anonymous-coder",
+      "target": "sobolevn"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "Kludex",
+      "target": "dmontagu"
+    },
+    {
+      "weight": 2,
+      "comments": 1,
+      "reviews": 1,
+      "source": "Kludex",
+      "target": "anonymous-coder"
+    },
+    {
+      "weight": 4,
+      "comments": 2,
+      "reviews": 2,
+      "source": "Kludex",
+      "target": "sobolevn"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "Kludex",
+      "target": "bernardo-cdm"
     },
     {
       "weight": 3,
       "comments": 1,
       "reviews": 2,
-      "source": "dmontagu",
+      "source": "Kludex",
+      "target": "matheus-soares"
+    },
+    {
+      "weight": 2,
+      "comments": 1,
+      "reviews": 1,
+      "source": "Kludex",
+      "target": "euri10"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "Kludex",
+      "target": "tiangolo"
+    },
+    {
+      "weight": 2,
+      "comments": 1,
+      "reviews": 1,
+      "source": "Kludex",
+      "target": "samuelcolvin"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "Kludex",
+      "target": "bueltge"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "Kludex",
       "target": "tomchristie"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "tiangolo",
+      "target": "dmontagu"
+    },
+    {
+      "weight": 7,
+      "comments": 4,
+      "reviews": 3,
+      "source": "tiangolo",
+      "target": "Kludex"
+    },
+    {
+      "weight": 2,
+      "comments": 0,
+      "reviews": 2,
+      "source": "tiangolo",
+      "target": "matheus-soares"
+    },
+    {
+      "weight": 2,
+      "comments": 1,
+      "reviews": 1,
+      "source": "tiangolo",
+      "target": "anonymous-coder"
     },
     {
       "weight": 3,
       "comments": 2,
       "reviews": 1,
-      "source": "dmontagu",
+      "source": "tiangolo",
+      "target": "euri10"
+    },
+    {
+      "weight": 1,
+      "comments": 0,
+      "reviews": 1,
+      "source": "tiangolo",
+      "target": "samuelcolvin"
+    },
+    {
+      "weight": 4,
+      "comments": 2,
+      "reviews": 2,
+      "source": "tiangolo",
+      "target": "sobolevn"
+    },
+    {
+      "weight": 3,
+      "comments": 1,
+      "reviews": 2,
+      "source": "tiangolo",
+      "target": "tomchristie"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "samuelcolvin",
+      "target": "dmontagu"
+    },
+    {
+      "weight": 2,
+      "comments": 2,
+      "reviews": 0,
+      "source": "samuelcolvin",
       "target": "anonymous-coder"
     },
     {
       "weight": 1,
       "comments": 1,
       "reviews": 0,
-      "source": "dmontagu",
-      "target": "samuelcolvin"
+      "source": "samuelcolvin",
+      "target": "Kludex"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "samuelcolvin",
+      "target": "euri10"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "samuelcolvin",
+      "target": "bernardo-cdm"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "samuelcolvin",
+      "target": "sobolevn"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "samuelcolvin",
+      "target": "matheus-soares"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "samuelcolvin",
+      "target": "tomchristie"
     },
     {
       "weight": 2,
-      "comments": 0,
-      "reviews": 2,
-      "source": "dmontagu",
-      "target": "matheus-soares"
+      "comments": 2,
+      "reviews": 0,
+      "source": "tomchristie",
+      "target": "anonymous-coder"
+    },
+    {
+      "weight": 3,
+      "comments": 3,
+      "reviews": 0,
+      "source": "tomchristie",
+      "target": "Kludex"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "tomchristie",
+      "target": "euri10"
+    },
+    {
+      "weight": 1,
+      "comments": 1,
+      "reviews": 0,
+      "source": "tomchristie",
+      "target": "bueltge"
     }
   ]
 }
