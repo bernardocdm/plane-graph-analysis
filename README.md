@@ -8,6 +8,63 @@ Análise de colaboração no ecossistema **FastAPI** usando Grafos Direcionados 
 
 Este projeto automatiza a mineração de interações (comentários e revisões de código) entre desenvolvedores no repositório do **FastAPI** (ou qualquer outro repositório do GitHub), constrói uma rede social de colaboração usando **NetworkX**, calcula métricas de centralidade, detecta comunidades através do algoritmo de **Louvain**, e exporta os dados para análise visual interativa no **Gephi** ou na web.
 
+### 🔄 Pipeline de Fluxo de Dados
+```mermaid
+graph TD
+    %% Fontes de Dados
+    subgraph Input ["Fontes de Entrada"]
+        API[GitHub API]
+        Mock[Gerador Mock / Sintético]
+    end
+
+    %% Módulo de Coleta
+    subgraph Mining ["Fase 1: Mineração & Cache"]
+        Miner[GitHubMiner]
+        Cache[(data/raw/*_data.json)]
+    end
+
+    %% Modelagem
+    subgraph GraphBuild ["Fase 2: Estruturação do Grafo"]
+        Builder[CollaborationGraphBuilder]
+        GraphState[(data/processed/graph_state.json)]
+    end
+
+    %% Análise
+    subgraph Analysis ["Fase 3: Métricas & Comunidades"]
+        Analyzer[analyzer.py]
+    end
+
+    %% Exportação
+    subgraph Output ["Fase 4: Exportação & Apresentação"]
+        CSV[(data/outputs/*.csv)]
+        JSON[(data/outputs/*.json)]
+        GEXF[(data/outputs/*.gexf)]
+        CLI[Terminal CLI: Top 10 & Globais]
+    end
+
+    %% Conexões do Fluxo
+    API -->|Coleta Online| Miner
+    Mock -->|Simulação Offline| Miner
+    Miner <-->|Salva / Carrega| Cache
+    Miner -->|Dados estruturados| Builder
+    Builder <-->|Persiste Estado| GraphState
+    Builder -->|nx.DiGraph| Analyzer
+    Analyzer -->|Cálculo de Centralidades & Louvain| CSV
+    Analyzer -->|Cálculo de Centralidades & Louvain| JSON
+    Analyzer -->|Cálculo de Centralidades & Louvain| GEXF
+    Analyzer -->|Ranking & Métricas Globais| CLI
+
+    %% Estilos
+    style API fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+    style Mock fill:#efebe9,stroke:#5d4037,stroke-width:2px
+    style Cache fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+    style GraphState fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+    style CSV fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style JSON fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style GEXF fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style CLI fill:#ede7f6,stroke:#7b1fa2,stroke-width:2px
+```
+
 ---
 
 ## 🚀 Como Executar Tudo
@@ -122,6 +179,28 @@ O projeto conta com uma infraestrutura robusta, testada e pronta para produção
    * Regra de Peso: A soma total de comentários e revisões realizados entre a dupla de desenvolvedores determina a força da conexão.
    * Filtro opcional e dinâmico de bots.
    * Serialização do estado do grafo completo em JSON no padrão Node-Link (`data/processed/graph_state.json`).
+   
+   **Modelo Conceitual do Grafo:**
+   ```mermaid
+   graph LR
+       subgraph Context ["Regra de Interação"]
+           DevA["Desenvolvedor A <br/>(Autor da Issue / PR)"]
+           DevB["Desenvolvedor B <br/>(Comentador / Revisor)"]
+           
+           DevB -->|Comentário ou Review| DevA
+       end
+
+       subgraph NetworkModel ["Representação no NetworkX"]
+           NodeB((Nó: Desenvolvedor B)) -->|Aresta Direcionada| NodeA((Nó: Desenvolvedor A))
+           
+           NodeB -.-> AttrB["Atributos do Nó:<br/>• avatar_url<br/>• user_type<br/>• contributions<br/>• Centralidades (PageRank, etc.)<br/>• community (Louvain ID)"]
+           
+           NodeB -->|weight = comments + reviews| NodeA
+       end
+       
+       style DevA fill:#bbdefb,stroke:#1976d2,stroke-width:1px
+       style DevB fill:#c8e6c9,stroke:#388e3c,stroke-width:1px
+   ```
 
 4. **Analisador de Métricas de Rede (`src/analysis/analyzer.py`):**
    * Cálculo robusto de métricas individuais para cada nó da rede:
