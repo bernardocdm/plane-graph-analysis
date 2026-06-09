@@ -1,56 +1,58 @@
 import csv
 import json
-import copy
-import networkx as nx
 from pathlib import Path
 from src.config import OUTPUT_DATA_DIR
+from src.graph.api import AbstractGraph
 
-def _prepare_augmented_graph(graph, centralities=None, communities=None):
+def export_to_gexf(graph: AbstractGraph, filepath=None, centralities=None, communities=None):
     """
-    Cria uma cópia profunda do grafo e adiciona as métricas calculadas como
-    atributos dos nós para que sejam salvas no arquivo final de exportação.
-    """
-    augmented = copy.deepcopy(graph)
-    
-    # Adicionar métricas aos nós se fornecidas
-    for node in augmented.nodes():
-        if centralities and node in centralities:
-            node_metrics = centralities[node]
-            augmented.nodes[node]["in_degree"] = float(node_metrics.get("in_degree", 0.0))
-            augmented.nodes[node]["out_degree"] = float(node_metrics.get("out_degree", 0.0))
-            augmented.nodes[node]["betweenness"] = float(node_metrics.get("betweenness", 0.0))
-            augmented.nodes[node]["closeness"] = float(node_metrics.get("closeness", 0.0))
-            augmented.nodes[node]["pagerank"] = float(node_metrics.get("pagerank", 0.0))
-            
-        if communities and node in communities:
-            augmented.nodes[node]["community"] = int(communities[node])
-            
-    return augmented
-
-def export_to_gexf(graph, filepath=None, centralities=None, communities=None):
-    """
-    Exporta o grafo no formato GEXF, ideal para visualização avançada no Gephi.
-    Garante que todas as métricas de centralidade e comunidade sejam embutidas no XML.
+    Exporta o grafo no formato GEXF utilizando o método embutido na API do Grafo.
     """
     path = filepath or OUTPUT_DATA_DIR / "collaboration_graph.gexf"
     
-    # Preparar grafo com atributos enriquecidos
-    enriched_graph = _prepare_augmented_graph(graph, centralities, communities)
+    # O nosso grafo já possui o método exportToGEPHI que gera o GEXF perfeitamente
+    graph.exportToGEPHI(str(path))
     
-    # Salvar em formato GEXF
-    nx.write_gexf(enriched_graph, path)
     print(f"[INFO] Grafo exportado com sucesso no formato Gephi (GEXF) em: {Path(path).name}")
     return path
 
-def export_to_json(graph, filepath=None, centralities=None, communities=None):
+def export_to_json(graph: AbstractGraph, filepath=None, centralities=None, communities=None):
     """
-    Exporta o grafo em formato JSON (node-link), excelente para visualização web com D3.js ou Vis.js.
+    Exporta o grafo em formato JSON customizado.
     """
     path = filepath or OUTPUT_DATA_DIR / "collaboration_graph.json"
     
-    enriched_graph = _prepare_augmented_graph(graph, centralities, communities)
+    data = {
+        "nodes": [],
+        "links": []
+    }
     
-    data = nx.node_link_data(enriched_graph)
+    num_vertices = graph.getVertexCount()
+    
+    for i in range(num_vertices):
+        label = graph.getVertexLabel(i)
+        node_data = {
+            "id": label,
+            "weight": graph.getVertexWeight(i)
+        }
+        
+        if centralities and label in centralities:
+            c = centralities[label]
+            node_data.update(c)
+            
+        if communities and label in communities:
+            node_data["group"] = communities[label]
+            
+        data["nodes"].append(node_data)
+        
+    for u in range(num_vertices):
+        for v in range(num_vertices):
+            if graph.hasEdge(u, v):
+                data["links"].append({
+                    "source": graph.getVertexLabel(u),
+                    "target": graph.getVertexLabel(v),
+                    "weight": graph.getEdgeWeight(u, v)
+                })
     
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
@@ -58,9 +60,9 @@ def export_to_json(graph, filepath=None, centralities=None, communities=None):
     print(f"[INFO] Grafo exportado com sucesso no formato JSON em: {Path(path).name}")
     return path
 
-def export_metrics_to_csv(centralities, communities, graph, filepath=None):
+def export_metrics_to_csv(centralities, communities, graph: AbstractGraph, filepath=None):
     """
-    Exporta a tabela comparativa de métricas de todos os contribuidores em formato CSV.
+    Exporta a tabela comparativa de métricas em formato CSV.
     """
     path = filepath or OUTPUT_DATA_DIR / "collaboration_metrics.csv"
     
@@ -75,13 +77,15 @@ def export_metrics_to_csv(centralities, communities, graph, filepath=None):
         "CommunityID"
     ]
     
+    num_vertices = graph.getVertexCount()
+    
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(headers)
         
-        for username in graph.nodes():
-            node_data = graph.nodes[username]
-            contributions = node_data.get("contributions", 0)
+        for i in range(num_vertices):
+            username = graph.getVertexLabel(i)
+            contributions = graph.getVertexWeight(i)
             
             c_data = centralities.get(username, {})
             in_deg = c_data.get("in_degree", 0.0)

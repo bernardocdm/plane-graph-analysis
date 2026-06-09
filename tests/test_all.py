@@ -1,5 +1,4 @@
 import pytest
-import networkx as nx
 from pathlib import Path
 from src import config
 from src.mining.miner import GitHubMiner
@@ -7,6 +6,7 @@ from src.graph.builder import CollaborationGraphBuilder
 from src import analysis
 from src.analysis import analyzer
 from src.export import exporter
+from src.graph.adjacency_list import AdjacencyListGraph
 
 def test_directories_creation():
     """Testa se as pastas padrão de dados são criadas corretamente."""
@@ -72,39 +72,46 @@ def test_graph_builder_and_bot_filtering():
     g = builder.build_from_mined_data(test_data)
     
     # dependabot (Bot) deve ser excluído
-    assert "dependabot" not in g.nodes()
-    assert "tiangolo" in g.nodes()
-    assert "dmontagu" in g.nodes()
+    labels = [g.getVertexLabel(i) for i in range(g.getVertexCount())]
+    assert "dependabot" not in labels
+    assert "tiangolo" in labels
+    assert "dmontagu" in labels
+    
+    id_t = labels.index("tiangolo")
+    id_d = labels.index("dmontagu")
     
     # Contribuições
     # tiangolo abriu 1 issue + comentou 1 pr + revisou 1 pr = 3 contribuições
-    assert g.nodes["tiangolo"]["contributions"] == 3
+    assert g.getVertexWeight(id_t) == 3.0
     # dmontagu abriu 1 pr + comentou 1 issue = 2 contribuições
-    assert g.nodes["dmontagu"]["contributions"] == 2
+    assert g.getVertexWeight(id_d) == 2.0
     
     # Arestas
-    # dmontagu comentou no post de tiangolo -> Aresta dmontagu -> tiangolo (peso 1)
-    assert g.has_edge("dmontagu", "tiangolo")
-    assert g.edges["dmontagu", "tiangolo"]["weight"] == 1
+    # dmontagu comentou no post de tiangolo -> Aresta dmontagu -> tiangolo
+    # O documento diz: comentário vale 2.
+    assert g.hasEdge(id_d, id_t)
+    assert g.getEdgeWeight(id_d, id_t) == 2.0
     
-    # tiangolo comentou e revisou no post de dmontagu -> Aresta tiangolo -> dmontagu (peso 2)
-    assert g.has_edge("tiangolo", "dmontagu")
-    assert g.edges["tiangolo", "dmontagu"]["weight"] == 2
-    assert g.edges["tiangolo", "dmontagu"]["comments"] == 1
-    assert g.edges["tiangolo", "dmontagu"]["reviews"] == 1
+    # tiangolo comentou e revisou no post de dmontagu -> Aresta tiangolo -> dmontagu
+    # Comentário (2) + Revisão (4) = 6
+    assert g.hasEdge(id_t, id_d)
+    assert g.getEdgeWeight(id_t, id_d) == 6.0
 
 def test_analyzer_metrics():
     """Testa se as funções do analisador de rede calculam as centralidades e comunidades sem erros."""
-    # Grafo de teste direcionado
-    g = nx.DiGraph()
-    g.add_node("A", contributions=10)
-    g.add_node("B", contributions=5)
-    g.add_node("C", contributions=2)
+    # Grafo de teste direcionado usando API custom
+    g = AdjacencyListGraph(3)
+    g.setVertexLabel(0, "A")
+    g.setVertexLabel(1, "B")
+    g.setVertexLabel(2, "C")
     
     # Arestas direcionadas com pesos
-    g.add_edge("A", "B", weight=3)
-    g.add_edge("B", "C", weight=1)
-    g.add_edge("C", "A", weight=2)
+    g.addEdge(0, 1)
+    g.setEdgeWeight(0, 1, 3.0)
+    g.addEdge(1, 2)
+    g.setEdgeWeight(1, 2, 1.0)
+    g.addEdge(2, 0)
+    g.setEdgeWeight(2, 0, 2.0)
     
     # Testar cálculo de centralidades
     centralities = analyzer.calculate_centralities(g)
@@ -112,7 +119,7 @@ def test_analyzer_metrics():
     assert "in_degree" in centralities["A"]
     assert "pagerank" in centralities["A"]
     
-    # Testar detecção de comunidades (Louvain)
+    # Testar detecção de comunidades
     communities = analyzer.detect_communities(g)
     assert "A" in communities
     assert "B" in communities
@@ -121,15 +128,20 @@ def test_analyzer_metrics():
     metrics = analyzer.get_network_metrics(g)
     assert metrics["nodes"] == 3
     assert metrics["edges"] == 3
-    assert metrics["density"] == 0.5  # Para N=3 direcionado, arestas max = 3 * 2 = 6, então densidade é 3/6 = 0.5
+    # Densidade para N=3 é 3 / (3*2) = 0.5
+    assert metrics["density"] == 0.5  
     assert metrics["reciprocity"] == 0.0
 
 def test_exporter_runs(tmp_path):
     """Testa se os exportadores salvam arquivos fisicamente sem levantar exceções."""
-    g = nx.DiGraph()
-    g.add_node("tiangolo", contributions=15)
-    g.add_node("dmontagu", contributions=10)
-    g.add_edge("dmontagu", "tiangolo", weight=4, comments=4, reviews=0)
+    g = AdjacencyListGraph(2)
+    g.setVertexLabel(0, "tiangolo")
+    g.setVertexLabel(1, "dmontagu")
+    g.setVertexWeight(0, 15)
+    g.setVertexWeight(1, 10)
+    
+    g.addEdge(1, 0)
+    g.setEdgeWeight(1, 0, 4.0)
     
     centralities = analyzer.calculate_centralities(g)
     communities = analyzer.detect_communities(g)

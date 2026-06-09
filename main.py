@@ -84,7 +84,7 @@ def main():
     builder = CollaborationGraphBuilder(exclude_bots=exclude_bots)
     graph = builder.build_from_mined_data(mined_data)
     
-    if len(graph) == 0:
+    if graph.getVertexCount() == 0:
         print("[WARN] Grafo vazio! Nenhum colaborador encontrado com os filtros atuais.")
         sys.exit(0)
         
@@ -117,18 +117,29 @@ def main():
     # 4. Mostrar os Top 10 Contribuidores mais influentes (PageRank)
     print_header("3. TOP 10 COLABORADORES MAIS INFLUENTES (PAGERANK)")
     
+    # Obter todos os usuários
+    all_users = [graph.getVertexLabel(i) for i in range(graph.getVertexCount())]
+    
     # Ordenar nós por PageRank
     top_contributors = sorted(
-        graph.nodes(),
-        key=lambda node: centralities.get(node, {}).get("pagerank", 0.0),
+        all_users,
+        key=lambda user: centralities.get(user, {}).get("pagerank", 0.0),
         reverse=True
     )[:10]
     
     headers = ["Username", "Contrib.", "In-Degree", "Out-Degree", "Betweenness", "PageRank", "Community"]
     rows = []
+    
+    # Precisamos do id do nó para buscar as contribuições (VertexWeight)
     for user in top_contributors:
-        node_attrs = graph.nodes[user]
-        contributions = node_attrs.get("contributions", 0)
+        # Encontrar id do user
+        node_id = -1
+        for i in range(graph.getVertexCount()):
+            if graph.getVertexLabel(i) == user:
+                node_id = i
+                break
+                
+        contributions = graph.getVertexWeight(node_id) if node_id != -1 else 0
         metrics = centralities.get(user, {})
         comm = communities.get(user, 0)
         
