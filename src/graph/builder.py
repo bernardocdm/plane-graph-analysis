@@ -261,7 +261,11 @@ class CollaborationGraphBuilder:
                 edges[pair] = edges.get(pair, 0.0) + 2.0
 
             # Peso extra +1 (= 3 total) para issues comentadas por outros
-            if not is_pr and external_commenters:
+            # Apenas se a issue foi aberta por "outro usuário" (não o dono do repositório)
+            repo = data.get("repository", "")
+            owner = repo.split("/")[0] if repo and "/" in repo else "tiangolo"
+            
+            if not is_pr and external_commenters and author != owner:
                 for commenter in external_commenters:
                     pair = (commenter, author)
                     edges[pair] = edges.get(pair, 0.0) + 1.0

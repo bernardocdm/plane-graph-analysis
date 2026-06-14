@@ -2,72 +2,131 @@
 !theme plain
 
 package "src.mining" {
-    abstract class GitHubMiner {
-        # token: str
-        # repo_name: str
-        + mine(limit: int): List[Dict]
-    }
-    
-    class IssueMiner extends GitHubMiner {
-        + mine(limit: int): List[Dict]
-        - parse_comments(): List[Dict]
-        - parse_closures(): List[Dict]
-    }
-    
-    class PRMiner extends GitHubMiner {
-        + mine(limit: int): List[Dict]
-        - parse_reviews(): List[Dict]
-        - parse_merges(): List[Dict]
+    class GitHubMiner {
+        + tokens: List[str]
+        + repo_name: str
+        + cache_file: Path
+        - _token_index: int
+        - g: Github
+        + __init__(tokens: List[str], repo_name: str)
+        - _make_client(): Github
+        - _rotate_token(): void
+        - _call_api(fn: Callable): Any
+        - _check_rate_limit(): int
+        - _save_checkpoint(issues_data: List, prs_data: List): void
+        + mine(limit: int, force_refresh: bool): Dict
+        + save_cache(data: Dict): void
+        + load_cache(): Dict
+        + {static} generate_mock_data(): Dict
     }
 }
 
 package "src.graph" {
     abstract class AbstractGraph {
-        # _num_vertices: int
-        # _vertex_weights: List[float]
-        + addEdge(u, v): void
-        + removeEdge(u, v): void
-        + hasEdge(u, v): bool
-        + getEdgeWeight(u, v): float
-        + setEdgeWeight(u, v, w): void
-        + getVertexInDegree(u): int
-        + getVertexOutDegree(u): int
+        + numVertices: int
+        + vertexWeights: List[float]
+        + vertexLabels: List[str]
+        + edgeCount: int
+        + __init__(numVertices: int)
+        # _check_vertex(v: int): void
+        + {abstract} hasEdge(u: int, v: int): bool
+        + {abstract} addEdge(u: int, v: int): void
+        + {abstract} removeEdge(u: int, v: int): void
+        + {abstract} setEdgeWeight(u: int, v: int, w: float): void
+        + {abstract} getEdgeWeight(u: int, v: int): float
+        + {abstract} getVertexInDegree(u: int): int
+        + {abstract} getVertexOutDegree(u: int): int
+        + getVertexCount(): int
+        + getEdgeCount(): int
+        + setVertexWeight(v: int, w: float): void
+        + getVertexWeight(v: int): float
+        + setVertexLabel(v: int, label: str): void
+        + getVertexLabel(v: int): str
+        + isSucessor(u: int, v: int): bool
+        + isPredessor(u: int, v: int): bool
+        + isDivergent(u1: int, v1: int, u2: int, v2: int): bool
+        + isConvergent(u1: int, v1: int, u2: int, v2: int): bool
+        + isIncident(u: int, v: int, x: int): bool
+        + isConnected(): bool
+        + isEmptyGraph(): bool
+        + isCompleteGraph(): bool
+        + exportToGEPHI(path: str): void
     }
     
     class AdjacencyListGraph extends AbstractGraph {
-        - _adjacency_list: Dict
-        - _in_degree: List[int]
-        - _out_degree: List[int]
+        + adjList: List[Dict[int, float]]
+        + __init__(numVertices: int)
+        + hasEdge(u: int, v: int): bool
+        + addEdge(u: int, v: int): void
+        + removeEdge(u: int, v: int): void
+        + setEdgeWeight(u: int, v: int, w: float): void
+        + getEdgeWeight(u: int, v: int): float
+        + getVertexInDegree(u: int): int
+        + getVertexOutDegree(u: int): int
     }
     
     class AdjacencyMatrixGraph extends AbstractGraph {
-        - _matrix: List[List[float]]
+        + matrix: List[List[float]]
+        + __init__(numVertices: int)
+        + hasEdge(u: int, v: int): bool
+        + addEdge(u: int, v: int): void
+        + removeEdge(u: int, v: int): void
+        + setEdgeWeight(u: int, v: int, w: float): void
+        + getEdgeWeight(u: int, v: int): float
+        + getVertexInDegree(u: int): int
+        + getVertexOutDegree(u: int): int
+    }
+
+    class CollaborationGraphBuilder {
+        + exclude_bots: bool
+        + graph: AbstractGraph
+        + graph_comments: AbstractGraph
+        + graph_closings: AbstractGraph
+        + graph_reviews: AbstractGraph
+        + username_to_id: Dict[str, int]
+        + __init__(exclude_bots: bool)
+        + build_from_mined_data(data: Dict): AbstractGraph
+        - _is_bot(username: str, user_type: str): bool
+        - _collect_users(data: Dict): Dict[str, Dict]
+        - _build_graph_from_edges(users: Dict, edge_weights: Dict, store_id_map: bool): AbstractGraph
+        - _build_graph_comments(data: Dict): AbstractGraph
+        - _build_graph_closings(data: Dict): AbstractGraph
+        - _build_graph_reviews(data: Dict): AbstractGraph
+        - _build_integrated_graph(data: Dict): AbstractGraph
+        + get_custom_graph(): AbstractGraph
+        + get_all_graphs(): Dict[str, AbstractGraph]
+        + save_graph_state(filepath: str): void
+        + load_graph_state(filepath: str): AbstractGraph
     }
 }
 
 package "src.analysis" {
-    class CentralityAnalyzer {
-        + degree_centrality(graph): Dict
-        + betweenness_centrality(graph): Dict
-        + closeness_centrality(graph): Dict
-    }
-    
-    class CommunityDetector {
-        + detect_louvain(graph): List[Set]
-        + modularity(graph, communities): float
+    class "analyzer (module)" as analyzer <<module>> {
+        + calculate_centralities(graph: AbstractGraph): Dict
+        + detect_communities(graph: AbstractGraph): Dict
+        + get_network_metrics(graph: AbstractGraph): Dict
+        - _bfs_distances(graph: AbstractGraph, source: int): Dict
+        - _betweenness_brandes(graph: AbstractGraph): Dict
+        - _closeness(graph: AbstractGraph): Dict
+        - _clustering_coefficient(graph: AbstractGraph): Tuple
+        - _assortativity(graph: AbstractGraph): float
+        - _weakly_connected_components(graph: AbstractGraph): int
+        - _strongly_connected_components(graph: AbstractGraph): int
+        - _network_diameter(graph: AbstractGraph): float
     }
 }
 
 package "src.export" {
-    class GEXFExporter {
-        + export_to_gexf(graph, filepath): void
-        + validate_xml(filepath): bool
+    class "exporter (module)" as exporter <<module>> {
+        + export_to_gexf(graph: AbstractGraph, filepath: Path, centralities: Dict, communities: Dict): Path
+        + export_to_json(graph: AbstractGraph, filepath: Path, centralities: Dict, communities: Dict): Path
+        + export_metrics_to_csv(centralities: Dict, communities: Dict, graph: AbstractGraph, filepath: Path): Path
     }
 }
 
-GitHubMiner --> "coleta" CentralityAnalyzer: dados
-IssueMiner --> AbstractGraph: arestas
-PRMiner --> AbstractGraph: arestas
-AbstractGraph --> CentralityAnalyzer: grafo
-CentralityAnalyzer --> GEXFExporter: métricas
+GitHubMiner ..> CollaborationGraphBuilder : "produz dados brutos"
+CollaborationGraphBuilder ..> AbstractGraph : "constrói instâncias de"
+CollaborationGraphBuilder --> AdjacencyListGraph : "instancia"
+analyzer ..> AbstractGraph : "analisa"
+exporter ..> AbstractGraph : "exporta"
 @enduml
