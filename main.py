@@ -192,9 +192,13 @@ def main():
 
     print(f"\n  [JSON] {json_path}")
     print(f"  [CSV]  {csv_path}")
+
+    # Exportar os 3 grafos individuais em JSON
+    graphs_dict = builder.get_all_graphs()
+    exporter.export_individual_graphs_to_json(graphs_dict)
+
     print("\n[SUCCESS] Pipeline concluído com sucesso!")
 
 
 if __name__ == "__main__":
     main()
-    

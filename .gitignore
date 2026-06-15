@@ -1,5 +1,7 @@
-# Files(files.zip)
+# Files
 *.zip
+
+# Python
 __pycache__/
 *.pyc
 *.pyo
@@ -9,9 +11,15 @@ __pycache__/
 dist/
 build/
 venv/
+
+# System
 .DS_Store
-data/raw/*.json
-*.gexf
+.env
+
+# Project data (generated, not committed)
+data/raw/
+data/outputs/
+
+# Relatórios e docs
 test_mining_report.json
 CLAUDE.md
-.env

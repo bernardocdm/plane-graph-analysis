@@ -4,16 +4,13 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-# Path absoluto relativo ao arquivo — funciona independente de onde o script é chamado
+# Path absoluto relativo ao arquivo
 DATA_DIR = Path(__file__).parent / "data/outputs"
 HOST = "127.0.0.1"
 PORT = 8000
 
 app = FastAPI(title="FastAPI Graph Analysis API")
 
-# allow_credentials=True é incompatível com allow_origins=["*"] no spec do CORS
-# (causa erro em versões recentes do starlette). Como não usamos cookies/auth,
-# basta listar as origens explícitas do Vite dev server.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:3000"],
@@ -21,9 +18,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# /api/graph já contém tudo: nós com centralidades + comunidade + arestas.
-# Não há centralities.json nem communities.json gerados pelo pipeline —
-# esses dados estão embutidos em cada nó do collaboration_graph.json.
 @app.get("/api/graph")
 def get_graph():
     """Retorna o grafo completo (nós com métricas + arestas)."""
@@ -33,6 +27,33 @@ def get_graph():
             status_code=404,
             detail="Execute primeiro: python main.py --use-mock"
         )
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.get("/api/graph/comments")
+def get_graph_comments():
+    """Retorna o grafo de comentários."""
+    file_path = DATA_DIR / "collaboration_graph_comments.json"
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Grafo de comentários não encontrado")
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.get("/api/graph/closings")
+def get_graph_closings():
+    """Retorna o grafo de fechamentos de issue."""
+    file_path = DATA_DIR / "collaboration_graph_closings.json"
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Grafo de fechamentos não encontrado")
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+@app.get("/api/graph/reviews")
+def get_graph_reviews():
+    """Retorna o grafo de reviews/merges de PRs."""
+    file_path = DATA_DIR / "collaboration_graph_reviews.json"
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Grafo de reviews não encontrado")
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
@@ -54,7 +75,6 @@ def get_metrics():
     num_nodes = len(nodes)
     num_edges = len(links)
 
-    # Índice de adjacência: node_id -> conjunto de vizinhos (saída)
     adj_out = {n: set() for n in nodes}
     adj_in  = {n: set() for n in nodes}
     for link in links:
@@ -63,15 +83,12 @@ def get_metrics():
             adj_out[s].add(t)
             adj_in[t].add(s)
 
-    # Densidade: E / (V * (V-1))
     max_edges = num_nodes * (num_nodes - 1)
     density = round(num_edges / max_edges, 4) if max_edges > 0 else 0.0
 
-    # Reciprocidade: fração de arestas que têm aresta reversa
     reciprocal = sum(1 for s in adj_out for t in adj_out[s] if s in adj_out.get(t, set()))
     reciprocity = round(reciprocal / num_edges, 4) if num_edges > 0 else 0.0
 
-    # Componentes fracamente conexos: BFS ignorando direção
     def weakly_connected_components(nodes, adj_out, adj_in):
         visited = set()
         count = 0
@@ -88,7 +105,6 @@ def get_metrics():
                     queue.extend(adj_in[node] - visited)
         return count
 
-    # Componentes fortemente conexos: algoritmo de Kosaraju
     def strongly_connected_components(nodes, adj_out, adj_in):
         visited = set()
         finish_order = []
@@ -126,7 +142,6 @@ def get_metrics():
                     stack.extend(adj_in[node] - visited2)
         return count
 
-    # Diâmetro: BFS a partir de cada nó no grafo não-direcionado
     def bfs_max_distance(start, adj_out, adj_in):
         dist = {start: 0}
         queue = [start]
@@ -166,6 +181,9 @@ if __name__ == "__main__":
     print("="*60)
     print("\nEndpoints:")
     print(f"   GET http://{HOST}:{PORT}/api/graph")
+    print(f"   GET http://{HOST}:{PORT}/api/graph/comments")
+    print(f"   GET http://{HOST}:{PORT}/api/graph/closings")
+    print(f"   GET http://{HOST}:{PORT}/api/graph/reviews")
     print(f"   GET http://{HOST}:{PORT}/api/metrics")
     print(f"   GET http://{HOST}:{PORT}/health")
     print(f"\nDocs: http://{HOST}:{PORT}/docs\n")

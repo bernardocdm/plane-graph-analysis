@@ -174,3 +174,63 @@ def export_metrics_to_csv(centralities, communities, graph: AbstractGraph, filep
 
     print(f"[INFO] CSV exportado: {Path(path).name}")
     return path
+
+
+def export_individual_graphs_to_json(graphs_dict, filepath_prefix=None):
+    """
+    Exporta os 3 grafos individuais (comments, closings, reviews) em JSON.
+    
+    graphs_dict: dicionário retornado por builder.get_all_graphs()
+    {
+        "comments": graph,
+        "closings": graph,
+        "reviews": graph,
+        "integrated": graph
+    }
+    """
+    filepath_prefix = filepath_prefix or OUTPUT_DATA_DIR
+    
+    graph_names = {
+        "comments": "collaboration_graph_comments.json",
+        "closings": "collaboration_graph_closings.json",
+        "reviews": "collaboration_graph_reviews.json",
+    }
+    
+    for graph_type, filename in graph_names.items():
+        if graph_type not in graphs_dict:
+            continue
+            
+        graph = graphs_dict[graph_type]
+        path = filepath_prefix / filename
+        
+        # Mesma lógica que export_to_json
+        data = {
+            "nodes": [],
+            "links": []
+        }
+        
+        num_vertices = graph.getVertexCount()
+        
+        for i in range(num_vertices):
+            label = graph.getVertexLabel(i)
+            node_data = {
+                "id": label,
+                "weight": graph.getVertexWeight(i)
+            }
+            data["nodes"].append(node_data)
+        
+        for u in range(num_vertices):
+            for v in range(num_vertices):
+                if graph.hasEdge(u, v):
+                    data["links"].append({
+                        "source": graph.getVertexLabel(u),
+                        "target": graph.getVertexLabel(v),
+                        "weight": graph.getEdgeWeight(u, v)
+                    })
+        
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        
+        print(f"[INFO] {graph_type.capitalize()} graph exportado em: {filename}")
+    
+    return graph_names
