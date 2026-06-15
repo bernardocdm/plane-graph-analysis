@@ -44,7 +44,7 @@ export function GraphTabs({ graphs }) {
 
     return (
         <section>
-            {/* Botões de abas */}
+            {/* Botões de abas para trocar entre grafos */}
             <div className="flex gap-2 mb-6 flex-wrap">
                 {tabs.map(tab => (
                     <button
@@ -61,43 +61,44 @@ export function GraphTabs({ graphs }) {
                 ))}
             </div>
 
-            {/* Descrição do grafo */}
+            {/* Descrição do grafo ativo */}
             <div className="mb-4 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
                 {getDescription()}
             </div>
 
-            {/* Grafo */}
+            {/* Grafo Sigma.js + Button Download */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 {hasData ? (
-                    <GraphVisualization graphData={currentGraph} />
+                    <>
+                        {/* Grafo */}
+                        <GraphVisualization graphData={currentGraph} />
+
+                        {/* Button Download GEXF logo abaixo do grafo */}
+                        <div className="p-4 bg-blue-50 border-t border-blue-200 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm text-blue-800 font-semibold">
+                                    💡 Visualização completa no Gephi
+                                </p>
+                                <p className="text-xs text-blue-600 mt-1">
+                                    Layout força-dirigido, cores por comunidade e controles avançados
+                                </p>
+                            </div>
+                            
+                            <a
+                                href={`/data/outputs/${currentTab.gexf}`}
+                                download={currentTab.gexf}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap"
+                            >
+                                📥 Baixar GEXF
+                            </a>
+                        </div>
+                    </>
                 ) : (
                     <div className="h-96 flex items-center justify-center text-gray-400">
                         <p>Sem dados para este grafo</p>
                     </div>
                 )}
             </div>
-
-            {/* Botão Gephi */}
-            {currentTab && (
-                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
-                    <div>
-                        <p className="text-sm text-blue-800 font-semibold">
-                            💡 Visualização completa no Gephi
-                        </p>
-                        <p className="text-xs text-blue-600 mt-1">
-                            Layout força-dirigido, cores por comunidade e controles avançados
-                        </p>
-                    </div>
-                    
-                    <a
-                        href={`/data/outputs/${currentTab.gexf}`}
-                        download={currentTab.gexf}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap"
-                    >
-                        📥 Baixar GEXF
-                    </a>
-                </div>
-            )}
         </section>
     );
 }

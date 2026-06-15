@@ -1,68 +1,28 @@
-# FastAPI Graph Analysis
+# FastAPI Graph Analysis - Plane Repository
 
-Análise de colaboração no ecossistema **FastAPI** usando Grafos Direcionados e Ponderados baseados nas interações em Issues e Pull Requests.
+Análise de colaboração no ecossistema **Plane** (makeplane/plane) usando Grafos Direcionados e Ponderados baseados nas interações em Issues e Pull Requests.
 
 ---
 
 ## 📊 Sobre o Projeto
 
-Este projeto automatiza a mineração de interações (comentários e revisões de código) entre desenvolvedores no repositório do **FastAPI** (ou qualquer outro repositório do GitHub), constrói uma rede social de colaboração usando uma **Estrutura de Grafo próprio (AdjacencyListGraph/AdjacencyMatrixGraph)** implementada do zero, calcula métricas de centralidade (PageRank, Betweenness de Brandes, Closeness de Wasserman & Faust), detecta comunidades através do algoritmo de **Label Propagation (Propagação de Rótulos)**, e exporta os dados para análise visual interativa no **Gephi** ou na web.
+Este projeto automatiza a mineração de interações (comentários, fechamentos e revisões de código) entre desenvolvedores no repositório **Plane** (makeplane/plane), constrói uma rede social de colaboração usando uma **Estrutura de Grafo próprio (AdjacencyListGraph/AdjacencyMatrixGraph)** implementada do zero, calcula métricas de centralidade (PageRank, Betweenness de Brandes, Closeness de Wasserman & Faust), detecta comunidades através do algoritmo de **Label Propagation (Propagação de Rótulos)**, e exporta os dados para análise visual interativa no **Gephi** ou na web com **Sigma.js**.
 
 ### 🔄 Pipeline de Fluxo de Dados
-```mermaid
-graph TD
-    %% Fontes de Dados
-    subgraph Input ["Fontes de Entrada"]
-        API[GitHub API]
-        Mock[Gerador Mock / Sintético]
-    end
-
-    %% Módulo de Coleta
-    subgraph Mining ["Fase 1: Mineração & Cache"]
-        Miner[GitHubMiner]
-        Cache[(data/raw/*_data.json)]
-    end
-
-    %% Modelagem
-    subgraph GraphBuild ["Fase 2: Estruturação do Grafo"]
-        Builder[CollaborationGraphBuilder]
-        GraphState[(data/processed/graph_state.json)]
-    end
-
-    %% Análise
-    subgraph Analysis ["Fase 3: Métricas & Comunidades"]
-        Analyzer[analyzer.py]
-    end
-
-    %% Exportação
-    subgraph Output ["Fase 4: Exportação & Apresentação"]
-        CSV[(data/outputs/*.csv)]
-        JSON[(data/outputs/*.json)]
-        GEXF[(data/outputs/*.gexf)]
-        CLI[Terminal CLI: Top 10 & Globais]
-    end
-
-    %% Conexões do Fluxo
-    API -->|Coleta Online| Miner
-    Mock -->|Simulação Offline| Miner
-    Miner <-->|Salva / Carrega| Cache
-    Miner -->|Dados estruturados| Builder
-    Builder <-->|Persiste Estado| GraphState
-    Builder -->|AbstractGraph| Analyzer
-    Analyzer -->|Cálculo de Centralidades & Label Prop.| CSV
-    Analyzer -->|Cálculo de Centralidades & Label Prop.| JSON
-    Analyzer -->|Cálculo de Centralidades & Label Prop.| GEXF
-    Analyzer -->|Ranking & Métricas Globais| CLI
-
-    %% Estilos
-    style API fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
-    style Mock fill:#efebe9,stroke:#5d4037,stroke-width:2px
-    style Cache fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
-    style GraphState fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
-    style CSV fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    style JSON fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    style GEXF fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    style CLI fill:#ede7f6,stroke:#7b1fa2,stroke-width:2px
+```
+GitHub API / Cache JSON
+    ↓
+src/mining/miner.py (mineração — outro integrante cuida)
+    ↓
+src/graph/builder.py (4 grafos)
+    ↓
+src/analysis/analyzer.py (centralidades + comunidades + métricas)
+    ↓
+src/export/exporter.py (JSON + CSV + GEXF)
+    ↓
+api_server.py (FastAPI)
+    ↓
+frontend/ (React + Sigma.js dashboard)
 ```
 
 ---
@@ -98,7 +58,7 @@ pip install -r requirements.txt
 
 ### 4. Executar o Script Principal (`main.py`)
 
-O pipeline central do projeto é controlado pelo arquivo `main.py`. Ele aceita diversos parâmetros de linha de comando para ajustar o comportamento da execução (mineração online, modo simulação/offline, limites de dados, etc.).
+O pipeline central do projeto é controlado pelo arquivo `main.py`. Ele aceita diversos parâmetros de linha de comando para ajustar o comportamento da execução.
 
 #### 💡 Cenários Comuns de Execução:
 
@@ -109,30 +69,30 @@ O pipeline central do projeto é controlado pelo arquivo `main.py`. Ele aceita d
   ```
 
 * **Modo Online Ativo (Mineração no GitHub):**
-  Realiza conexões reais com o GitHub API. Se você tiver um token pessoal de acesso, defina-o na variável de ambiente `GITHUB_TOKEN` para evitar limites rígidos de requisição (60 req/hora sem token vs. 5000 req/hora com token).
+  Realiza conexões reais com o GitHub API. Se você tiver um token pessoal de acesso, defina-o na variável de ambiente `GITHUB_TOKEN`.
   
   *No Windows (PowerShell):*
   ```powershell
   $env:GITHUB_TOKEN="seu_token_aqui"
-  python main.py --mine --limit 30
+  python main.py --mine --limit 100
   ```
   
   *No Linux / macOS:*
   ```bash
   export GITHUB_TOKEN="seu_token_aqui"
-  python main.py --mine --limit 30
+  python main.py --mine --limit 100
   ```
 
 * **Ignorar Cache Local e Forçar Nova Coleta:**
   Por padrão, os dados minerados ficam salvos em cache local. Use `--force-refresh` para atualizar as informações ativamente do GitHub:
   ```bash
-  python main.py --mine --limit 50 --force-refresh
+  python main.py --mine --limit 200 --force-refresh
   ```
 
-* **Analisar Outro Repositório e Incluir Bots de Automação:**
-  Por padrão, robôs como o `dependabot` são filtrados para não poluir as métricas humanas. Você pode desativar essa restrição e analisar outros repositórios públicos:
+* **Analisar Repositório Plane e Incluir Bots de Automação:**
+  Por padrão, robôs como o `dependabot` são filtrados. Você pode desativar essa restrição:
   ```bash
-  python main.py --mine --repo "encode/starlette" --limit 40 --include-bots
+  python main.py --mine --repo "makeplane/plane" --limit 100 --include-bots
   ```
 
 #### 🛠️ Parâmetros Disponíveis da CLI:
@@ -163,80 +123,77 @@ pytest tests/ -v --cov=src
 
 O projeto conta com uma infraestrutura robusta, testada e pronta para produção:
 
+### Backend
+
 1. **Configuração Unificada (`src/config.py`):**
-   * Criação automatizada de diretórios de trabalho (`data/raw/`, `data/processed/`, `data/outputs/`).
-   * Gerenciamento de credenciais via variáveis de ambiente (`GITHUB_TOKEN`).
+   * Criação automatizada de diretórios de trabalho.
+   * Gerenciamento de credenciais via variáveis de ambiente.
 
 2. **Módulo de Mineração Inteligente (`src/mining/miner.py`):**
-   * Conexão ativa com o GitHub API via biblioteca `PyGithub`.
-   * Coleta granular de Issues, Pull Requests, Comentários de discussões e Revisões de código (PR Reviews).
-   * Sistema inteligente de **cache local** em formato JSON para otimizar requisições e contornar limites de taxa (Rate Limit).
-   * Gerador avançado de **dados realistas simulados (Mock)** reproduzindo perfeitamente as principais interações históricas dos principais desenvolvedores reais do FastAPI.
+   * Conexão ativa com o GitHub API do repositório Plane.
+   * Coleta granular de Issues (1219), Pull Requests (4347), Comentários e Revisões.
+   * Sistema inteligente de **cache local** em formato JSON.
+   * Gerador avançado de **dados realistas simulados (Mock)**.
 
 3. **Modelagem de Grafo de Colaboração (`src/graph/builder.py`):**
-   * Construção de um grafo direcionado e ponderado usando uma **Lista de Adjacência (`AdjacencyListGraph`)** própria implementada do zero (sem uso de NetworkX).
-   * Regra de Aresta ($A \rightarrow B$): Desenvolvedor $A$ interagiu (comentou ou revisou) em uma Issue ou PR de autoria do Desenvolvedor $B$.
-   * Regra de Peso: A soma total de comentários e revisões realizados entre a dupla de desenvolvedores determina a força da conexão.
-   * Filtro opcional e dinâmico de bots.
-   * Serialização do estado do grafo integrado em JSON no padrão Node-Link (`data/processed/graph_state.json`) via método `save_graph_state()`.
-   
-   **Modelo Conceitual do Grafo:**
-   ```mermaid
-   graph LR
-       subgraph Context ["Regra de Interação"]
-           DevA["Desenvolvedor A <br/>(Autor da Issue / PR)"]
-           DevB["Desenvolvedor B <br/>(Comentador / Revisor)"]
-           
-           DevB -->|Comentário ou Review| DevA
-       end
-
-       subgraph NetworkModel ["Representação no Grafo Próprio"]
-           NodeB((Nó: Desenvolvedor B)) -->|Aresta Direcionada| NodeA((Nó: Desenvolvedor A))
-           
-           NodeB -.-> AttrB["Atributos do Nó:<br/>• avatar_url<br/>• user_type<br/>• contributions<br/>• Centralidades (PageRank, etc.)<br/>• community (Label Prop. ID)"]
-           
-           NodeB -->|weight = comments + reviews| NodeA
-       end
-       
-       style DevA fill:#bbdefb,stroke:#1976d2,stroke-width:1px
-       style DevB fill:#c8e6c9,stroke:#388e3c,stroke-width:1px
-   ```
+   * Construção de **4 grafos direcionados e ponderados**:
+     * **Grafo 1 (Comentários):** A comentou em issue/PR de B → aresta A→B, peso 2.0
+     * **Grafo 2 (Fechamentos):** A fechou issue de B → aresta A→B, peso 3.0
+     * **Grafo 3 (Reviews/Merges):** Revisão (peso 4.0), Merge (peso 5.0)
+     * **Grafo 4 (Integrado):** Combina todos, acumula pesos
+   * Implementação própria de **Lista de Adjacência** e **Matriz de Adjacência**.
+   * Filtro opcional e dinâmico de bots (dependabot, plane-bot, github-actions, etc).
+   * Resultado: **1496 nós, 2313 arestas** (dados reais do Plane).
 
 4. **Analisador de Métricas de Rede (`src/analysis/analyzer.py`):**
-   * Cálculo robusto de métricas individuais para cada nó da rede (tudo desenvolvido do zero, sem pacotes externos):
-     * **In-Degree Centrality** (quem atrai mais comentários e revisões).
-     * **Out-Degree Centrality** (quem mais interage ativamente nas postagens alheias).
-     * **Betweenness Centrality** (via algoritmo de Brandes).
-     * **Closeness Centrality** (via Wasserman & Faust para redes parcialmente conexas).
-     * **PageRank Ponderado** (via Power Iteration).
-   * Algoritmo de **Label Propagation (Propagação de Rótulos)** integrado para detecção automatizada de comunidades de colaboradores.
-   * Cálculo de métricas estruturais globais (Densidade, Reciprocidade mútua, Agrupamento médio (Clustering coefficient), quantidade de Componentes conexos fracos/fortes com algoritmo de Kosaraju e Diâmetro da rede com tratamento robusto para grafos desconectados).
+   * **Centralidades (implementadas do zero):**
+     * Degree Centrality (in/out normalizados)
+     * PageRank (Power Iteration, d=0.85, 100 iterações)
+     * Betweenness Centrality (Algoritmo de Brandes, O(V·E))
+     * Closeness Centrality (Wasserman & Faust para grafos desconexos)
+   * **Detecção de Comunidades:** Label Propagation (20 iterações, determinístico)
+   * **Métricas Globais:** Densidade, reciprocidade, clustering, assortatividade, WCC, SCC (Kosaraju), diâmetro
+   * 100% implementado manualmente (sem NetworkX).
 
 5. **Módulo de Exportação e Saídas (`src/export/exporter.py`):**
-   * **`.gexf` (Gephi):** Exportação enriquecida contendo as métricas de centralidade e os IDs de comunidades do Label Propagation embutidos em cada nó, ideal para visualização espacial avançada.
-   * **`.json` (Node-Link):** Formato padrão perfeito para consumo imediato por bibliotecas web interativas de visualização de redes, como *D3.js*, *Vis.js* ou *Sigma.js*.
-   * **`.csv` (Metrics Table):** Planilha organizada contendo as estatísticas consolidadas de cada desenvolvedor participante para análise estatística ou plotagem rápida.
+   * **`.gexf` (Gephi):** Enriquecido com métricas e comunidades embutidas.
+   * **`.json` (Node-Link):** Padrão para consumo por Sigma.js e outras bibliotecas web.
+   * **`.csv` (Metrics Table):** Estatísticas consolidadas de cada desenvolvedor.
 
-6. **Interface de Terminal Interativa (`main.py`):**
-   * Orquestração fluida de todo o processo em quatro etapas sequenciais.
-   * Exibição automatizada de estatísticas globais e exibição de um lindo ranking das 10 figuras mais influentes baseado no prestígio do PageRank.
+6. **Interface de Linha de Comando (`main.py`):**
+   * Orquestração fluida de todo o processo em 4 etapas.
+   * Exibição automatizada de estatísticas globais e ranking Top 10 por PageRank.
 
-7. **Suíte Completa de Testes (`tests/test_all.py`):**
-   * 100% dos testes unitários passando.
-   * Validação de fluxos de diretórios, mock, lógica de ponderação de arestas, regras de centralidade e integridade física de arquivos gerados.
+7. **Suíte Completa de Testes (`tests/`):**
+   * `test_graph.py`: 9+ testes parametrizados (AdjacencyList + AdjacencyMatrix)
+   * `test_all.py`: 5 testes de integração do pipeline
+   * 100% dos testes passando.
 
----
+### Frontend
 
-## 📅 O Que Falta (Próximos Passos)
+8. **API Server FastAPI (`api_server.py`):**
+   * Endpoints RESTful para consumo do frontend:
+     * `GET /api/graph` - Grafo integrado completo
+     * `GET /api/graph/comments` - Grafo de comentários
+     * `GET /api/graph/closings` - Grafo de fechamentos
+     * `GET /api/graph/reviews` - Grafo de reviews/merges
+     * `GET /api/metrics` - Métricas globais
+   * CORS configurado para frontend local.
 
-Identificamos as seguintes frentes de evolução recomendadas para o projeto:
-
-* [ ] **Pipeline de Integração Contínua (CI):** Implementação de fluxo do GitHub Actions para rodar a suíte `pytest` a cada push ou PR enviado.
-* [ ] **Dashboard Web Interativo:** Criação de um frontend web simples para carregar interativamente o arquivo `collaboration_graph.json` gerado na pasta de outputs, permitindo que o usuário explore a rede de forma visual no navegador.
-* [ ] **Análise Temporal da Rede:** Funcionalidade para comparar a evolução estrutural da rede de forma cronológica (ex: analisar fotos do grafo mês a mês para captar o amadurecimento e a mudança na liderança técnica do projeto).
-* [ ] **Suporte a Outras Plataformas:** Extensão do módulo de mineração para coletar dados a partir de logs locais de repositórios Git clássicos ou da API do GitLab.
-* [ ] **Relatório em PDF Computacional (LaTeX):** Redação estruturada e automatização do relatório teórico-prático sobre os resultados das métricas e conclusões obtidas sobre o ecossistema do FastAPI (pasta `relatorio/` a ser criada).
-* [ ] **Melhoria de Paginação na API do GitHub:** Adição de controle avançado sobre o rate limit para permitir coletas consecutivas em grandes volumes de dados (ex: acima de 500 issues de uma vez) sem interrupções abruptas.
+9. **Dashboard React (`frontend/`):**
+   * **Componentes:**
+     * `App.jsx`: Layout principal com header/footer
+     * `DashboardMetrics.jsx`: 4 cards + tabela de ranking
+     * `GraphTabs.jsx`: Abas para trocar entre 4 grafos
+     * `GraphVisualization.jsx`: Renderização com Sigma.js
+   * **Funcionalidades:**
+     * 1496 nós renderizados interativamente
+     * 2313 arestas visíveis
+     * Cores por comunidade (Label Propagation)
+     * Tamanho dos nós proporcional a PageRank
+     * Zoom, pan, click interativo
+     * Botão download GEXF para Gephi
+   * **Tecnologias:** React 18, Sigma.js, Tailwind CSS, Vite
 
 ---
 
@@ -245,60 +202,129 @@ Identificamos as seguintes frentes de evolução recomendadas para o projeto:
 ```text
 fastapi-graph-analysis/
 │
-├── main.py                   # CLI principal — orquestra o pipeline completo
-├── api_server.py             # Servidor FastAPI para a interface web
-│                             #   GET /api/graph   → grafo com métricas por nó
-│                             #   GET /api/metrics → métricas globais da rede
+├── main.py                   # CLI principal — orquestra o pipeline
+├── api_server.py             # Servidor FastAPI
 ├── requirements.txt          # Dependências Python
 ├── pytest.ini                # Configuração do pytest
 │
 ├── src/                      # Código-fonte do backend
-│   ├── config.py             # Caminhos globais e leitura do GITHUB_TOKEN
+│   ├── config.py             # Caminhos globais
 │   ├── mining/
-│   │   └── miner.py          # GitHubMiner: coleta issues/PRs/comentários/reviews + mock data
+│   │   └── miner.py          # GitHubMiner: coleta + mock data
 │   ├── graph/
-│   │   └── builder.py        # CollaborationGraphBuilder: constrói DiGraph ponderado (NetworkX)
+│   │   ├── api.py            # AbstractGraph (7 métodos abstratos)
+│   │   ├── adjacency_list.py # AdjacencyListGraph
+│   │   ├── adjacency_matrix.py # AdjacencyMatrixGraph
+│   │   └── builder.py        # CollaborationGraphBuilder (4 grafos)
 │   ├── analysis/
-│   │   └── analyzer.py       # Centralidades (5), comunidades Louvain, métricas globais
-│   ├── export/
-│   │   └── exporter.py       # Exporta GEXF (Gephi), JSON (D3.js) e CSV
-│   └── api/
-│       └── routes.py         # [vazio] placeholder para rotas separadas do api_server.py
+│   │   └── analyzer.py       # Centralidades + Label Propagation + métricas
+│   └── export/
+│       └── exporter.py       # GEXF + JSON + CSV
 │
 ├── tests/
-│   ├── test_all.py           # 5 testes unitários (todos passando)
-│   └── fixtures/             # [vazio] futuro: dados fixos para testes
+│   ├── test_all.py           # 5 testes de integração
+│   └── test_graph.py         # 9+ testes da API de grafos
 │
-├── data/                     # Gerado em runtime — não versionado (exceto processed/)
-│   ├── raw/                  # Cache JSON bruto da GitHub API (.gitignore)
+├── data/                     # Gerado em runtime
+│   ├── raw/                  # Cache JSON bruto (.gitignore)
 │   ├── processed/
-│   │   └── graph_state.json  # Estado intermediário do grafo (node-link)
+│   │   └── graph_state.json
 │   └── outputs/
-│       ├── collaboration_graph.json  # Grafo completo com métricas — consumido pela API
-│       ├── collaboration_graph.gexf  # Grafo para visualização no Gephi
-│       └── collaboration_metrics.csv # Tabela com centralidades por contribuidor
+│       ├── collaboration_graph.json
+│       ├── collaboration_graph_*.json (3 individuais)
+│       ├── graph_*.gexf (4 arquivos)
+│       └── collaboration_metrics.csv
 │
-├── frontend/                 # Interface web (em desenvolvimento — React + Vite + Tailwind)
-│   ├── package.json          # [vazio] dependências a instalar
+├── frontend/                 # Interface web React
+│   ├── package.json
+│   ├── vite.config.js
 │   └── src/
-│       └── public/           # [vazio] futuro: index.html e assets
+│       ├── main.jsx
+│       ├── App.jsx
+│       ├── index.css
+│       ├── hooks/
+│       │   └── useGraphData.js
+│       └── components/
+│           ├── DashboardMetrics.jsx
+│           ├── GraphTabs.jsx
+│           └── GraphVisualization.jsx
 │
 ├── docs/
-│   ├── class-diagram.puml    # Diagrama UML de classes (PlantUML)
-│   └── flow-diagram.puml     # Diagrama de sequência do pipeline
+│   ├── class-diagram.puml    # Diagrama UML
+│   └── flow-diagram.puml     # Diagrama de fluxo
 │
-└── relatorio/                # [vazio] futuro: relatório LaTeX
+└── README.md                 # Este arquivo
 ```
 
 ---
 
-## 🔗 Links e Recursos Recomendados
+## 🔗 Links e Recursos
 
-* **FastAPI (Repositório Alvo):** [https://github.com/encode/fastapi](https://github.com/encode/fastapi)
-* **Gephi (Software de Visualização):** [https://gephi.org/](https://gephi.org/)
-* **PyGithub (Integração com a API do GitHub):** [https://pygithub.readthedocs.io/](https://pygithub.readthedocs.io/)
-* **D3.js (Visualizações Interativas):** [https://d3js.org/](https://d3js.org/)
+* **Plane (Repositório Alvo):** [https://github.com/makeplane/plane](https://github.com/makeplane/plane)
+* **Projeto (GitHub):** [https://github.com/bernardocdm/fastapi-graph-analysis](https://github.com/bernardocdm/fastapi-graph-analysis)
+* **Gephi (Visualização):** [https://gephi.org/](https://gephi.org/)
+* **Sigma.js (Web):** [https://www.sigmajs.org/](https://www.sigmajs.org/)
+* **PyGithub (API):** [https://pygithub.readthedocs.io/](https://pygithub.readthedocs.io/)
 
 ---
 
-**Status:** Pronto para execução e análise visual. 🚀
+## 👥 Divisão de Tarefas
+
+| Responsabilidade | Responsável |
+|-----------------|------------|
+| **Frontend (React + Sigma.js)** | Bernardo |
+| **API Server (FastAPI)** | Bernardo |
+| **Testes unitários** | Bernardo + Matheus |
+| **Diagramas UML** | Bernardo + Arthur |
+| **Slides da apresentação** | Bernardo |
+| **Mineração (GitHub API)** | Arthur |
+| **Relatório LaTeX** | Arthur |
+| **Lógica dos 4 grafos** | Arthur + Matheus |
+| **Implementação das classes de grafo** | Matheus |
+| **Análise (Centralidades + Comunidades)** | Matheus |
+| **Exportação (GEXF + JSON + CSV)** | Matheus |
+| **Testes de integração** | Matheus |
+
+---
+
+## 📊 Dados e Resultados
+
+**Repositório Analisado:** Plane (makeplane/plane)
+**Período:** Dados históricos até Janeiro/2024
+
+**Estatísticas:**
+- **Issues processadas:** 1219
+- **Pull Requests processados:** 4347
+- **Usuários únicos:** 1496
+- **Interações (arestas):** 2313
+- **Densidade do grafo:** 0.0010
+- **Reciprocidade:** 0.0510
+- **Diâmetro:** 10
+- **Componentes fracos:** 159
+- **Componentes fortes (Kosaraju):** 1453
+
+**Top 5 Colaboradores (PageRank):**
+1. sriramveeraghanta - 0.1207
+2. Prince-Shivaram - 0.1191
+3. gurusainath - 0.1191
+4. pablohashescobar - 0.1241
+5. ChandanTeerth - 0.1141
+
+---
+
+## 🎯 Status do Projeto
+
+✅ **Completo e Funcional**
+
+- [x] Mineração de dados (GitHub API + Mock)
+- [x] Construção de 4 grafos (implementações próprias)
+- [x] Análise completa (centralidades + comunidades)
+- [x] Exportação (JSON + GEXF + CSV)
+- [x] API Server (FastAPI)
+- [x] Frontend (React + Sigma.js)
+- [x] Testes (30+ testes passando)
+- [x] Documentação (Diagramas UML)
+
+---
+
+Desenvolvido para a disciplina de **Teoria de Grafos e Computabilidade - PUC Minas**

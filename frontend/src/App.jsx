@@ -44,8 +44,8 @@ function App() {
             <header className="bg-white shadow">
                 <div className="max-w-7xl mx-auto px-6 py-8 flex justify-between items-center">
                     <div>
-                        <h1 className="text-4xl font-bold text-gray-900">FastAPI Graph Analysis</h1>
-                        <p className="text-gray-600 mt-2">Dashboard de análise de colaboração no FastAPI</p>
+                        <h1 className="text-4xl font-bold text-gray-900">Plane Graph Analysis</h1>
+                        <p className="text-gray-600 mt-2">Dashboard de análise de colaboração no Plane</p>
                     </div>
                     
                     {/* Botão Sigma */}
@@ -70,8 +70,8 @@ function App() {
                     <GraphTabs graphs={graphs} />
 
                     <p className="text-xs text-gray-500 mt-2">
-                                        💡 Dica: Use scroll para zoom, arraste para mover, clique em nós para mais detalhes
-                                    </p>
+                        💡 Dica: Use scroll para zoom, arraste para mover, clique em nós para mais detalhes
+                    </p>
                 </section>
             )}
 
