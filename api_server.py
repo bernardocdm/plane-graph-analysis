@@ -3,11 +3,21 @@ import json
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 # Path absoluto relativo ao arquivo
 DATA_DIR = Path(__file__).parent / "data/outputs"
 HOST = "127.0.0.1"
 PORT = 8000
+
+# Arquivos GEXF liberados para download (whitelist por segurança,
+# evita path traversal via filename arbitrário na URL)
+ALLOWED_GEXF_FILES = {
+    "graph_integrated.gexf",
+    "graph_comments.gexf",
+    "graph_closings.gexf",
+    "graph_reviews.gexf",
+}
 
 app = FastAPI(title="FastAPI Graph Analysis API")
 
@@ -170,6 +180,34 @@ def get_metrics():
         "strongly_connected_components": strong_components,
     }
 
+@app.get("/api/download/{filename}")
+def download_gexf(filename: str):
+    """
+    Serve os arquivos .gexf de data/outputs para download direto pelo
+    frontend (botão "Baixar GEXF" no GraphTabs).
+
+    Necessário porque o Vite (porta 5173) não tem acesso ao diretório
+    data/outputs do backend — um link relativo como '/data/outputs/...'
+    cai no fallback de SPA do Vite e devolve o index.html (causando o
+    erro de import no Gephi: "Unexpected character 'd' after '<!'",
+    ou seja, '<!doctype html>').
+    """
+    if filename not in ALLOWED_GEXF_FILES:
+        raise HTTPException(status_code=404, detail="Arquivo não encontrado")
+
+    file_path = DATA_DIR / filename
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail=f"{filename} não encontrado. Execute primeiro: python main.py"
+        )
+
+    return FileResponse(
+        path=file_path,
+        media_type="application/xml",
+        filename=filename,  # define Content-Disposition: attachment; filename=...
+    )
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
@@ -185,6 +223,7 @@ if __name__ == "__main__":
     print(f"   GET http://{HOST}:{PORT}/api/graph/closings")
     print(f"   GET http://{HOST}:{PORT}/api/graph/reviews")
     print(f"   GET http://{HOST}:{PORT}/api/metrics")
+    print(f"   GET http://{HOST}:{PORT}/api/download/<arquivo>.gexf")
     print(f"   GET http://{HOST}:{PORT}/health")
     print(f"\nDocs: http://{HOST}:{PORT}/docs\n")
     uvicorn.run(app, host=HOST, port=PORT)

@@ -83,9 +83,19 @@ export function GraphTabs({ graphs }) {
                                     Layout força-dirigido, cores por comunidade e controles avançados
                                 </p>
                             </div>
-                            
+
+                            {/*
+                              Antes: href={`/data/outputs/${currentTab.gexf}`}
+                              Esse caminho não existe no Vite (porta 5173), então cai no
+                              fallback de SPA e baixa o index.html (<!doctype html>...),
+                              quebrando o import no Gephi.
+
+                              Agora: usa o endpoint /api/download/<arquivo>.gexf do
+                              api_server.py (porta 8000), que o Vite já proxyia via
+                              '/api' -> 'http://localhost:8000' (vite.config.js).
+                            */}
                             <a
-                                href={`/data/outputs/${currentTab.gexf}`}
+                                href={`/api/download/${currentTab.gexf}`}
                                 download={currentTab.gexf}
                                 className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap"
                             >
