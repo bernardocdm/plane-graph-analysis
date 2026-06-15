@@ -7,10 +7,10 @@ export function GraphTabs({ graphs }) {
     if (!graphs) return <div className="p-4 text-gray-500">Nenhum grafo carregado</div>;
 
     const tabs = [
-        { id: 'integrated', label: '📊 Grafo Integrado', color: 'blue' },
-        { id: 'comments', label: '💬 Comentários', color: 'green' },
-        { id: 'closings', label: '🔒 Fechamentos', color: 'purple' },
-        { id: 'reviews', label: '✅ Reviews/Merges', color: 'orange' },
+        { id: 'integrated', label: '📊 Grafo Integrado', color: 'blue', gexf: 'graph_integrated.gexf' },
+        { id: 'comments', label: '💬 Comentários', color: 'green', gexf: 'graph_comments.gexf' },
+        { id: 'closings', label: '🔒 Fechamentos', color: 'purple', gexf: 'graph_closings.gexf' },
+        { id: 'reviews', label: '✅ Reviews/Merges', color: 'orange', gexf: 'graph_reviews.gexf' },
     ];
 
     const getButtonColor = (color) => {
@@ -38,6 +38,7 @@ export function GraphTabs({ graphs }) {
         }
     };
 
+    const currentTab = tabs.find(t => t.id === activeTab);
     const currentGraph = graphs[activeTab];
     const hasData = currentGraph && currentGraph.nodes && currentGraph.nodes.length > 0;
 
@@ -60,23 +61,6 @@ export function GraphTabs({ graphs }) {
                 ))}
             </div>
 
-            {/* Botão Gephi */}
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-800 mb-3">
-                    💡 <strong>Visualização completa:</strong> Importe o arquivo GEXF no Gephi para layout força-dirigido e controles avançados
-                </p>
-                
-                    href="http://localhost:8000/api/graph"
-                    download="collaboration_graph.gexf"
-                    className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
-                >
-                    📥 Baixar GEXF para Gephi
-                </a>
-                <p className="text-xs text-gray-500 mt-2">
-                    Abra com: Gephi → File → Open → collaboration_graph.gexf
-                </p>
-            </div>
-
             {/* Descrição do grafo */}
             <div className="mb-4 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
                 {getDescription()}
@@ -92,6 +76,28 @@ export function GraphTabs({ graphs }) {
                     </div>
                 )}
             </div>
+
+            {/* Botão Gephi */}
+            {currentTab && (
+                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-between">
+                    <div>
+                        <p className="text-sm text-blue-800 font-semibold">
+                            💡 Visualização completa no Gephi
+                        </p>
+                        <p className="text-xs text-blue-600 mt-1">
+                            Layout força-dirigido, cores por comunidade e controles avançados
+                        </p>
+                    </div>
+                    
+                    <a
+                        href={`/data/outputs/${currentTab.gexf}`}
+                        download={currentTab.gexf}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap"
+                    >
+                        📥 Baixar GEXF
+                    </a>
+                </div>
+            )}
         </section>
     );
 }
