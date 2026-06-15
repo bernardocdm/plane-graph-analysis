@@ -166,5 +166,23 @@ def test_isolated_vertex(graph_class):
     # Vértice 2 está isolado
     assert g.getVertexInDegree(2) == 0
     assert g.getVertexOutDegree(2) == 0
-    assert g.isConnected() == False    
+    assert g.isConnected() == False
 
+def test_export_to_gephi(graph_class, tmp_path):
+    """Testa a exportação do grafo para o formato GEXF (Gephi)."""
+    g = graph_class(2)
+    g.setVertexLabel(0, "alice")
+    g.setVertexLabel(1, "bob")
+    g.setVertexWeight(0, 5.0)
+    g.addEdge(0, 1)
+    g.setEdgeWeight(0, 1, 3.0)
+
+    path = tmp_path / "out.gexf"
+    g.exportToGEPHI(str(path))
+
+    assert path.exists()
+    content = path.read_text(encoding="utf-8")
+    assert "<gexf" in content
+    assert 'label="alice"' in content
+    assert 'label="bob"' in content
+    assert 'source="0" target="1"' in content

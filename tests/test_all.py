@@ -1,4 +1,5 @@
 import pytest
+import json
 from pathlib import Path
 from src import config
 from src.mining.miner import GitHubMiner
@@ -162,8 +163,225 @@ def test_exporter_runs(tmp_path):
     assert csv_file.exists()
     
     # Garantir que o JSON é parseável
-    import json
     with open(json_file, "r") as f:
         data = json.load(f)
         assert "nodes" in data
         assert "links" in data
+
+
+# ==========================================
+# TESTES - PERSISTÊNCIA DO GRAFO (save/load)
+# ==========================================
+
+def test_save_and_load_graph_state(tmp_path):
+    """Testa a persistência (save/load) do estado do grafo integrado."""
+    test_data = {
+        "issues": [
+            {
+                "number": 1,
+                "title": "Bug in API",
+                "author": "tiangolo",
+                "author_avatar": "avatar_t",
+                "author_type": "User",
+                "is_pr": False,
+                "comments": [
+                    {"author": "dmontagu", "author_avatar": "avatar_d", "author_type": "User"}
+                ]
+            }
+        ],
+        "prs": []
+    }
+
+    builder = CollaborationGraphBuilder(exclude_bots=True)
+    builder.build_from_mined_data(test_data)
+
+    state_file = tmp_path / "graph_state.json"
+    builder.save_graph_state(state_file)
+    assert state_file.exists()
+
+    # Recarregar em um builder novo
+    new_builder = CollaborationGraphBuilder()
+    g2 = new_builder.load_graph_state(state_file)
+
+    assert g2.getVertexCount() == builder.graph.getVertexCount()
+    assert g2.getEdgeCount() == builder.graph.getEdgeCount()
+
+    labels = [g2.getVertexLabel(i) for i in range(g2.getVertexCount())]
+    assert "tiangolo" in labels
+    assert "dmontagu" in labels
+
+
+def test_load_graph_state_missing_file_raises(tmp_path):
+    """load_graph_state deve levantar FileNotFoundError se o arquivo não existir."""
+    builder = CollaborationGraphBuilder()
+    with pytest.raises(FileNotFoundError):
+        builder.load_graph_state(tmp_path / "nao_existe.json")
+
+
+# ==========================================
+# TESTES - GRAFO INTEGRADO (fechamento e merge)
+# ==========================================
+
+def test_integrated_graph_closing_and_merge_weights():
+    """Testa os pesos de fechamento de issue (3) e merge de PR (5) no grafo integrado."""
+    test_data = {
+        "issues": [
+            {
+                "number": 1,
+                "title": "Bug report",
+                "author": "alice",
+                "author_avatar": "avatar_a",
+                "author_type": "User",
+                "is_pr": False,
+                "comments": [],
+                "closed_by": "bob"
+            }
+        ],
+        "prs": [
+            {
+                "number": 2,
+                "title": "Fix bug",
+                "author": "alice",
+                "author_avatar": "avatar_a",
+                "author_type": "User",
+                "is_pr": True,
+                "comments": [],
+                "reviews": [],
+                "merged": True,
+                "merged_by": "bob"
+            }
+        ]
+    }
+
+    builder = CollaborationGraphBuilder(exclude_bots=True)
+    g = builder.build_from_mined_data(test_data)
+
+    labels = [g.getVertexLabel(i) for i in range(g.getVertexCount())]
+    id_a = labels.index("alice")
+    id_b = labels.index("bob")
+
+    # bob fechou a issue de alice (peso 3) e fez merge do PR de alice (peso 5)
+    # Aresta bob -> alice deve ter peso total 3 + 5 = 8
+    assert g.hasEdge(id_b, id_a)
+    assert g.getEdgeWeight(id_b, id_a) == 8.0
+
+    # Grafo 2 (fechamentos) deve conter a aresta bob -> alice com peso 3
+    labels2 = [builder.graph_closings.getVertexLabel(i) for i in range(builder.graph_closings.getVertexCount())]
+    id2_b, id2_a = labels2.index("bob"), labels2.index("alice")
+    assert builder.graph_closings.hasEdge(id2_b, id2_a)
+    assert builder.graph_closings.getEdgeWeight(id2_b, id2_a) == 3.0
+
+    # Grafo 3 (revisões/merges) deve conter a aresta bob -> alice com peso 5
+    labels3 = [builder.graph_reviews.getVertexLabel(i) for i in range(builder.graph_reviews.getVertexCount())]
+    id3_b, id3_a = labels3.index("bob"), labels3.index("alice")
+    assert builder.graph_reviews.hasEdge(id3_b, id3_a)
+    assert builder.graph_reviews.getEdgeWeight(id3_b, id3_a) == 5.0
+
+
+def test_get_all_graphs_returns_four_graphs():
+    """get_all_graphs deve retornar os 4 grafos esperados após a construção."""
+    test_data = {
+        "issues": [
+            {
+                "number": 1,
+                "title": "Bug report",
+                "author": "alice",
+                "author_avatar": "avatar_a",
+                "author_type": "User",
+                "is_pr": False,
+                "comments": [
+                    {"author": "bob", "author_avatar": "avatar_b", "author_type": "User"}
+                ]
+            }
+        ],
+        "prs": []
+    }
+
+    builder = CollaborationGraphBuilder(exclude_bots=True)
+    builder.build_from_mined_data(test_data)
+
+    graphs = builder.get_all_graphs()
+    assert set(graphs.keys()) == {"comments", "closings", "reviews", "integrated"}
+    assert graphs["integrated"] is builder.get_custom_graph()
+
+
+# ==========================================
+# TESTES - EXPORTAÇÃO SEM MÉTRICAS
+# ==========================================
+
+def test_exporter_with_no_metrics(tmp_path):
+    """Testa os exportadores quando centralidades/comunidades não são fornecidas."""
+    g = AdjacencyListGraph(2)
+    g.setVertexLabel(0, "alice")
+    g.setVertexLabel(1, "bob")
+    g.addEdge(0, 1)
+    g.setEdgeWeight(0, 1, 2.0)
+
+    gexf_file = tmp_path / "no_metrics.gexf"
+    json_file = tmp_path / "no_metrics.json"
+
+    exporter.export_to_gexf(g, gexf_file, centralities=None, communities=None)
+    exporter.export_to_json(g, json_file, centralities=None, communities=None)
+
+    assert gexf_file.exists()
+    assert json_file.exists()
+
+    with open(json_file, "r") as f:
+        data = json.load(f)
+        assert data["nodes"][0]["id"] == "alice"
+        # Sem comunidades informadas, a chave "community" não deve existir
+        assert "community" not in data["nodes"][0]
+
+
+# ==========================================
+# TESTES - EXPORTAÇÃO DOS GRAFOS INDIVIDUAIS
+# ==========================================
+
+def test_export_individual_graphs_to_json(tmp_path):
+    """Testa a exportação dos grafos individuais (comentários, fechamentos, revisões)."""
+    g_comments = AdjacencyListGraph(2)
+    g_comments.setVertexLabel(0, "alice")
+    g_comments.setVertexLabel(1, "bob")
+    g_comments.addEdge(0, 1)
+    g_comments.setEdgeWeight(0, 1, 2.0)
+
+    g_closings = AdjacencyListGraph(2)
+    g_closings.setVertexLabel(0, "alice")
+    g_closings.setVertexLabel(1, "bob")
+
+    graphs_dict = {
+        "comments": g_comments,
+        "closings": g_closings,
+        # "reviews" propositalmente ausente, para testar o "continue"
+        "integrated": g_comments,
+    }
+
+    result = exporter.export_individual_graphs_to_json(graphs_dict, filepath_prefix=tmp_path)
+
+    assert (tmp_path / "collaboration_graph_comments.json").exists()
+    assert (tmp_path / "collaboration_graph_closings.json").exists()
+    # "reviews" não estava em graphs_dict, então o arquivo não deve ser criado
+    assert not (tmp_path / "collaboration_graph_reviews.json").exists()
+
+    with open(tmp_path / "collaboration_graph_comments.json") as f:
+        data = json.load(f)
+    assert data["nodes"][0]["id"] == "alice"
+    assert data["links"][0] == {"source": "alice", "target": "bob", "weight": 2.0}
+
+    # Deve sempre retornar o mapa completo dos 3 nomes possíveis
+    assert set(result.keys()) == {"comments", "closings", "reviews"}
+
+
+def test_export_individual_graphs_to_json_default_path(monkeypatch, tmp_path):
+    """Testa o uso do caminho padrão (OUTPUT_DATA_DIR) quando filepath_prefix não é informado."""
+    monkeypatch.setattr("src.export.exporter.OUTPUT_DATA_DIR", tmp_path)
+
+    g = AdjacencyListGraph(1)
+    g.setVertexLabel(0, "alice")
+
+    graphs_dict = {"comments": g, "closings": g, "reviews": g}
+    exporter.export_individual_graphs_to_json(graphs_dict)
+
+    assert (tmp_path / "collaboration_graph_comments.json").exists()
+    assert (tmp_path / "collaboration_graph_closings.json").exists()
+    assert (tmp_path / "collaboration_graph_reviews.json").exists()
