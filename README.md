@@ -1,4 +1,4 @@
-# FastAPI Graph Analysis - Plane Repository
+# Plane Graph Analysis - Plane Repository
 
 Análise de colaboração no ecossistema **Plane** (makeplane/plane) usando Grafos Direcionados e Ponderados baseados nas interações em Issues e Pull Requests.
 
@@ -33,8 +33,8 @@ Siga os passos abaixo para preparar o ambiente e executar a pipeline completa do
 
 ### 1. Clonar o Repositório e Navegar até a Pasta
 ```bash
-git clone https://github.com/bernardocdm/fastapi-graph-analysis.git
-cd fastapi-graph-analysis
+git clone https://github.com/bernardocdm/plane-graph-analysis.git
+cd plane-graph-analysis
 ```
 
 ### 2. Criar e Ativar o Ambiente Virtual
@@ -200,7 +200,7 @@ O projeto conta com uma infraestrutura robusta, testada e pronta para produção
 ## 📁 Estrutura de Pastas do Projeto
 
 ```text
-fastapi-graph-analysis/
+plane-graph-analysis/
 │
 ├── main.py                   # CLI principal — orquestra o pipeline
 ├── api_server.py             # Servidor FastAPI
@@ -261,7 +261,7 @@ fastapi-graph-analysis/
 ## 🔗 Links e Recursos
 
 * **Plane (Repositório Alvo):** [https://github.com/makeplane/plane](https://github.com/makeplane/plane)
-* **Projeto (GitHub):** [https://github.com/bernardocdm/fastapi-graph-analysis](https://github.com/bernardocdm/fastapi-graph-analysis)
+* **Projeto (GitHub):** [https://github.com/bernardocdm/plane-graph-analysis](https://github.com/bernardocdm/plane-graph-analysis)
 * **Gephi (Visualização):** [https://gephi.org/](https://gephi.org/)
 * **Sigma.js (Web):** [https://www.sigmajs.org/](https://www.sigmajs.org/)
 * **PyGithub (API):** [https://pygithub.readthedocs.io/](https://pygithub.readthedocs.io/)
