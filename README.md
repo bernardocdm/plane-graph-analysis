@@ -4,11 +4,11 @@ Análise de colaboração no ecossistema **Plane** (makeplane/plane) usando Graf
 
 ---
 
-## 📊 Sobre o Projeto
+##  Sobre o Projeto
 
 Este projeto automatiza a mineração de interações (comentários, fechamentos e revisões de código) entre desenvolvedores no repositório **Plane** (makeplane/plane), constrói uma rede social de colaboração usando uma **Estrutura de Grafo próprio (AdjacencyListGraph/AdjacencyMatrixGraph)** implementada do zero, calcula métricas de centralidade (PageRank, Betweenness de Brandes, Closeness de Wasserman & Faust), detecta comunidades através do algoritmo de **Label Propagation (Propagação de Rótulos)**, e exporta os dados para análise visual interativa no **Gephi** ou na web com **Sigma.js**.
 
-### 🔄 Pipeline de Fluxo de Dados
+###  Pipeline de Fluxo de Dados
 ```
 GitHub API / Cache JSON
     ↓
@@ -27,7 +27,7 @@ frontend/ (React + Sigma.js dashboard)
 
 ---
 
-## 🚀 Como Executar Tudo
+## Como Executar Tudo
 
 Siga os passos abaixo para preparar o ambiente e executar a pipeline completa do projeto.
 
@@ -60,7 +60,7 @@ pip install -r requirements.txt
 
 O pipeline central do projeto é controlado pelo arquivo `main.py`. Ele aceita diversos parâmetros de linha de comando para ajustar o comportamento da execução.
 
-#### 💡 Cenários Comuns de Execução:
+####  Cenários Comuns de Execução:
 
 * **Modo Offline Rápido (Demonstração / Sem API Token):**
   Excelente para testar a pipeline instantaneamente sem se preocupar com limites de requisição da API do GitHub. Utiliza um gerador robusto de dados realistas e simulados.
@@ -95,7 +95,7 @@ O pipeline central do projeto é controlado pelo arquivo `main.py`. Ele aceita d
   python main.py --mine --repo "makeplane/plane" --limit 100 --include-bots
   ```
 
-#### 🛠️ Parâmetros Disponíveis da CLI:
+####  Parâmetros Disponíveis da CLI:
 
 | Parâmetro | Tipo | Descrição | Padrão |
 | :--- | :--- | :--- | :--- |
@@ -108,7 +108,7 @@ O pipeline central do projeto é controlado pelo arquivo `main.py`. Ele aceita d
 
 ---
 
-## 🧪 Como Executar os Testes Automatizados
+##  Como Executar os Testes Automatizados
 
 A suíte de testes unitários garante a estabilidade de toda a lógica do grafo, cálculo de centralidades e exportadores.
 
@@ -119,7 +119,7 @@ pytest tests/ -v --cov=src
 
 ---
 
-## 🛠️ O Que Já Foi Feito (Implementado)
+##  O Que Já Foi Feito (Implementado)
 
 O projeto conta com uma infraestrutura robusta, testada e pronta para produção:
 
@@ -197,7 +197,7 @@ O projeto conta com uma infraestrutura robusta, testada e pronta para produção
 
 ---
 
-## 📁 Estrutura de Pastas do Projeto
+##  Estrutura de Pastas do Projeto
 
 ```text
 plane-graph-analysis/
@@ -258,7 +258,7 @@ plane-graph-analysis/
 
 ---
 
-## 🔗 Links e Recursos
+## Links e Recursos
 
 * **Plane (Repositório Alvo):** [https://github.com/makeplane/plane](https://github.com/makeplane/plane)
 * **Projeto (GitHub):** [https://github.com/bernardocdm/plane-graph-analysis](https://github.com/bernardocdm/plane-graph-analysis)
@@ -268,7 +268,7 @@ plane-graph-analysis/
 
 ---
 
-## 👥 Divisão de Tarefas
+##  Divisão de Tarefas
 
 | Responsabilidade | Responsável |
 |-----------------|------------|
@@ -287,7 +287,7 @@ plane-graph-analysis/
 
 ---
 
-## 📊 Dados e Resultados
+##  Dados e Resultados
 
 **Repositório Analisado:** Plane (makeplane/plane)
 **Período:** Dados históricos até Janeiro/2024
@@ -312,7 +312,7 @@ plane-graph-analysis/
 
 ---
 
-## 🎯 Status do Projeto
+##  Status do Projeto
 
 ✅ **Completo e Funcional**
 
