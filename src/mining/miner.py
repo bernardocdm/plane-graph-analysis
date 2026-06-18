@@ -5,6 +5,13 @@ from github import Github, GithubException, RateLimitExceededException
 from src.config import RAW_DATA_DIR, GITHUB_TOKENS, DEFAULT_REPO
 
 
+# ==============================================================================
+# Classe: GitHubMiner
+# Descrição: Classe responsável pela mineração de dados de issues e PRs de um
+#            repositório no GitHub. Implementa gerenciamento de múltiplos tokens
+#            (rotação automática para evitar estouro de limites/rate limits) e
+#            sistema de cache/checkpoints para evitar perdas de progresso.
+# ==============================================================================
 class GitHubMiner:
     """
     Responsável por coletar dados do repositório GitHub e gerenciar o cache local.

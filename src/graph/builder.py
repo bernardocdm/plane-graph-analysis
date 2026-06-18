@@ -4,6 +4,12 @@ from src.config import PROCESSED_DATA_DIR
 from src.graph.adjacency_list import AdjacencyListGraph
 
 
+# ==============================================================================
+# Classe: CollaborationGraphBuilder
+# Descrição: Classe responsável pela construção dos grafos de colaboração
+#            exigidos a partir de dados minerados do GitHub (comentários,
+#            fechamento de issues, revisões/merges de PRs e o grafo integrado).
+# ==============================================================================
 class CollaborationGraphBuilder:
     """
     Constrói os 4 grafos de colaboração exigidos pelo trabalho prático.

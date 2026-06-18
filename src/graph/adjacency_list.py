@@ -1,5 +1,12 @@
 from src.graph.api import AbstractGraph
 
+# ==============================================================================
+# Classe: AdjacencyListGraph
+# Descrição: Implementação concreta de Grafo (AbstractGraph) que utiliza listas
+#            de adjacência para representar as conexões e pesos entre vértices.
+#            É especialmente indicada para grafos esparsos por conta da economia
+#            de memória.
+# ==============================================================================
 class AdjacencyListGraph(AbstractGraph):
     """
     Implementação do grafo utilizando listas de adjacência.

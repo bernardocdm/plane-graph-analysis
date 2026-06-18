@@ -1,5 +1,12 @@
 from src.graph.api import AbstractGraph
 
+# ==============================================================================
+# Classe: AdjacencyMatrixGraph
+# Descrição: Implementação concreta de Grafo (AbstractGraph) que utiliza matrizes
+#            de adjacência para armazenar as conexões e os pesos entre vértices.
+#            É recomendada para grafos densos devido à rapidez na consulta de
+#            existência de arestas.
+# ==============================================================================
 class AdjacencyMatrixGraph(AbstractGraph):
     """
     Implementação do grafo utilizando matriz de adjacência.

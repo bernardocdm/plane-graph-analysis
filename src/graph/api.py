@@ -2,6 +2,13 @@ from abc import ABC, abstractmethod
 import math
 import os
 
+# ==============================================================================
+# Classe: AbstractGraph
+# Descrição: Esta classe abstrata (baseada em ABC) define a API padrão,
+#            os atributos compartilhados e os métodos comuns para manipulação
+#            de grafos no sistema. Serve como a base estrutural para as subclasses
+#            AdjacencyListGraph e AdjacencyMatrixGraph.
+# ==============================================================================
 class AbstractGraph(ABC):
     """
     Classe abstrata que define a API comum, atributos compartilhados 
