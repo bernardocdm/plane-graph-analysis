@@ -2,102 +2,45 @@
 !theme plain
 
 actor User
-participant Main as "main.py"
-participant Miner as "GitHubMiner"
-participant Builder as "CollaborationGraphBuilder"
-participant Graph as "AdjacencyListGraph"
-participant Analyzer as "analyzer.py"
-participant Exporter as "exporter.py"
-database "Cache/Disk" as DB
+participant Mining
+participant DataProcessing
+participant Graph
+participant Analysis
+participant Export
+participant Gephi
 
-User -> Main: python main.py [options]
-activate Main
+User -> Mining: python test_mining.py <token>
+activate Mining
+Mining -> Mining: IssueMiner.mine(50)
+Mining -> Mining: PRMiner.mine(50)
+Mining -> Mining: parse_interactions()
+deactivate Mining
+Mining --> DataProcessing: edges.json (200KB)
 
-Main -> Miner: mine() or generate_mock_data()
-activate Miner
-alt mine data from GitHub
-    loop for each issue/PR
-        Miner -> Miner: _call_api()
-        note over Miner: Rotates tokens if rate limit exceeded
-        opt every 100 items
-            Miner -> DB: _save_checkpoint()
-        end
-    end
-else generate mock
-    Miner -> Miner: generate_mock_data()
-end
-Miner --> Main: mined_data (Dict)
-deactivate Miner
+User -> DataProcessing: carrega edges.json
+activate DataProcessing
+DataProcessing -> Graph: monta 4 grafos
+deactivate DataProcessing
 
-Main -> Builder: build_from_mined_data(mined_data)
-activate Builder
-Builder -> Builder: _collect_users()
-loop for each of the 4 graph types (comments, closings, reviews, integrated)
-    Builder -> Graph: __init__(numVertices)
-    activate Graph
-    Graph --> Builder: graph instance
-    deactivate Graph
-    Builder -> Graph: addEdge() / setEdgeWeight() / setVertexWeight()
-end
-Builder --> Main: integrated_graph
-deactivate Builder
+User -> Graph: calcula métricas
+activate Graph
+Graph -> Graph: getVertexInDegree()
+Graph -> Graph: getVertexOutDegree()
+Graph -> Analysis: passa grafo
+deactivate Graph
 
-Main -> Builder: save_graph_state()
-activate Builder
-Builder -> DB: save to graph_state.json
-deactivate Builder
+activate Analysis
+Analysis -> Analysis: degree_centrality()
+Analysis -> Analysis: betweenness_centrality()
+Analysis -> Analysis: detect_louvain()
+deactivate Analysis
+Analysis --> Export: métricas calculadas
 
-Main -> Analyzer: calculate_centralities(graph)
-activate Analyzer
-Analyzer -> Analyzer: PageRank (Power Iteration)
-Analyzer -> Analyzer: Betweenness (Brandes)
-Analyzer -> Analyzer: Closeness (Wasserman & Faust)
-Analyzer --> Main: centralities (Dict)
-deactivate Analyzer
+activate Export
+Export -> Export: export_to_gexf()
+deactivate Export
+Export --> Gephi: grafo.gexf
 
-Main -> Analyzer: detect_communities(graph)
-activate Analyzer
-Analyzer -> Analyzer: Label Propagation
-Analyzer --> Main: communities (Dict)
-deactivate Analyzer
-
-Main -> Analyzer: get_network_metrics(graph)
-activate Analyzer
-Analyzer -> Analyzer: density, reciprocity, clustering, assortativity, SCC (Kosaraju), diameter
-Analyzer --> Main: global_metrics (Dict)
-deactivate Analyzer
-
-Main -> Main: print metrics & Top 10 contributors table
-
-Main -> Builder: get_all_graphs()
-activate Builder
-Builder --> Main: all_graphs (Dict)
-deactivate Builder
-
-loop for each graph
-    Main -> Exporter: export_to_gexf(g, filepath, ...)
-    activate Exporter
-    Exporter -> DB: save graph_*.gexf
-    deactivate Exporter
-end
-
-Main -> Exporter: export_to_json(graph, ...)
-activate Exporter
-Exporter -> DB: save collaboration_graph.json
-deactivate Exporter
-
-Main -> Exporter: export_metrics_to_csv(graph, ...)
-activate Exporter
-Exporter -> DB: save collaboration_metrics.csv
-deactivate Exporter
-
-Main --> User: Pipeline finalizado com sucesso
-deactivate Main
-
-opt FastAPI API Server
-    User -> DB: python api_server.py
-    activate DB
-    DB --> User: Servidor HTTP rodando na porta 8000
-    deactivate DB
-end
+User -> Gephi: abre visualização
+Gephi --> User: análise visual
 @enduml

@@ -6,7 +6,7 @@ Análise de colaboração no ecossistema **FastAPI** usando Grafos Direcionados 
 
 ## 📊 Sobre o Projeto
 
-Este projeto automatiza a mineração de interações (comentários e revisões de código) entre desenvolvedores no repositório do **FastAPI** (ou qualquer outro repositório do GitHub), constrói uma rede social de colaboração usando uma **Estrutura de Grafo próprio (AdjacencyListGraph/AdjacencyMatrixGraph)** implementada do zero, calcula métricas de centralidade (PageRank, Betweenness de Brandes, Closeness de Wasserman & Faust), detecta comunidades através do algoritmo de **Label Propagation (Propagação de Rótulos)**, e exporta os dados para análise visual interativa no **Gephi** ou na web.
+Este projeto automatiza a mineração de interações (comentários e revisões de código) entre desenvolvedores no repositório do **FastAPI** (ou qualquer outro repositório do GitHub), constrói uma rede social de colaboração usando **NetworkX**, calcula métricas de centralidade, detecta comunidades através do algoritmo de **Louvain**, e exporta os dados para análise visual interativa no **Gephi** ou na web.
 
 ### 🔄 Pipeline de Fluxo de Dados
 ```mermaid
@@ -48,10 +48,10 @@ graph TD
     Miner <-->|Salva / Carrega| Cache
     Miner -->|Dados estruturados| Builder
     Builder <-->|Persiste Estado| GraphState
-    Builder -->|AbstractGraph| Analyzer
-    Analyzer -->|Cálculo de Centralidades & Label Prop.| CSV
-    Analyzer -->|Cálculo de Centralidades & Label Prop.| JSON
-    Analyzer -->|Cálculo de Centralidades & Label Prop.| GEXF
+    Builder -->|nx.DiGraph| Analyzer
+    Analyzer -->|Cálculo de Centralidades & Louvain| CSV
+    Analyzer -->|Cálculo de Centralidades & Louvain| JSON
+    Analyzer -->|Cálculo de Centralidades & Louvain| GEXF
     Analyzer -->|Ranking & Métricas Globais| CLI
 
     %% Estilos
@@ -141,10 +141,10 @@ O pipeline central do projeto é controlado pelo arquivo `main.py`. Ele aceita d
 | :--- | :--- | :--- | :--- |
 | `--mine` | Flag | Ativa a mineração real do repositório no GitHub (via API). | `False` |
 | `--use-mock` | Flag | Força o uso imediato de dados simulados (offline). | `False` |
-| `--limit` | Inteiro | Limite máximo de Issues/PRs a processar na mineração ativa. | `200` |
+| `--limit` | Inteiro | Limite máximo de Issues/PRs a processar na mineração ativa. | `50` |
 | `--include-bots` | Flag | Inclui bots automáticos (ex: `dependabot`) no grafo final. | `False` |
 | `--force-refresh` | Flag | Ignora o arquivo de cache JSON local e força uma nova busca online. | `False` |
-| `--repo` | String | Nome do repositório no GitHub para processamento. | `"makeplane/plane"` |
+| `--repo` | String | Nome do repositório no GitHub para processamento. | `"encode/fastapi"` |
 
 ---
 
@@ -174,11 +174,11 @@ O projeto conta com uma infraestrutura robusta, testada e pronta para produção
    * Gerador avançado de **dados realistas simulados (Mock)** reproduzindo perfeitamente as principais interações históricas dos principais desenvolvedores reais do FastAPI.
 
 3. **Modelagem de Grafo de Colaboração (`src/graph/builder.py`):**
-   * Construção de um grafo direcionado e ponderado usando uma **Lista de Adjacência (`AdjacencyListGraph`)** própria implementada do zero (sem uso de NetworkX).
+   * Construção de um grafo direcionado e ponderado usando a biblioteca **NetworkX**.
    * Regra de Aresta ($A \rightarrow B$): Desenvolvedor $A$ interagiu (comentou ou revisou) em uma Issue ou PR de autoria do Desenvolvedor $B$.
    * Regra de Peso: A soma total de comentários e revisões realizados entre a dupla de desenvolvedores determina a força da conexão.
    * Filtro opcional e dinâmico de bots.
-   * Serialização do estado do grafo integrado em JSON no padrão Node-Link (`data/processed/graph_state.json`) via método `save_graph_state()`.
+   * Serialização do estado do grafo completo em JSON no padrão Node-Link (`data/processed/graph_state.json`).
    
    **Modelo Conceitual do Grafo:**
    ```mermaid
@@ -190,10 +190,10 @@ O projeto conta com uma infraestrutura robusta, testada e pronta para produção
            DevB -->|Comentário ou Review| DevA
        end
 
-       subgraph NetworkModel ["Representação no Grafo Próprio"]
+       subgraph NetworkModel ["Representação no NetworkX"]
            NodeB((Nó: Desenvolvedor B)) -->|Aresta Direcionada| NodeA((Nó: Desenvolvedor A))
            
-           NodeB -.-> AttrB["Atributos do Nó:<br/>• avatar_url<br/>• user_type<br/>• contributions<br/>• Centralidades (PageRank, etc.)<br/>• community (Label Prop. ID)"]
+           NodeB -.-> AttrB["Atributos do Nó:<br/>• avatar_url<br/>• user_type<br/>• contributions<br/>• Centralidades (PageRank, etc.)<br/>• community (Louvain ID)"]
            
            NodeB -->|weight = comments + reviews| NodeA
        end
@@ -203,17 +203,17 @@ O projeto conta com uma infraestrutura robusta, testada e pronta para produção
    ```
 
 4. **Analisador de Métricas de Rede (`src/analysis/analyzer.py`):**
-   * Cálculo robusto de métricas individuais para cada nó da rede (tudo desenvolvido do zero, sem pacotes externos):
+   * Cálculo robusto de métricas individuais para cada nó da rede:
      * **In-Degree Centrality** (quem atrai mais comentários e revisões).
      * **Out-Degree Centrality** (quem mais interage ativamente nas postagens alheias).
-     * **Betweenness Centrality** (via algoritmo de Brandes).
-     * **Closeness Centrality** (via Wasserman & Faust para redes parcialmente conexas).
-     * **PageRank Ponderado** (via Power Iteration).
-   * Algoritmo de **Label Propagation (Propagação de Rótulos)** integrado para detecção automatizada de comunidades de colaboradores.
-   * Cálculo de métricas estruturais globais (Densidade, Reciprocidade mútua, Agrupamento médio (Clustering coefficient), quantidade de Componentes conexos fracos/fortes com algoritmo de Kosaraju e Diâmetro da rede com tratamento robusto para grafos desconectados).
+     * **Betweenness Centrality** (principais pontes/articuladores de comunicação).
+     * **Closeness Centrality** (proximidade média na rede).
+     * **PageRank Ponderado** (prestígio e influência relativa dos desenvolvedores na rede).
+   * Algoritmo de **Louvain** integrado para detecção automatizada de comunidades de colaboradores.
+   * Cálculo de métricas estruturais globais (Densidade, Reciprocidade mútua, Agrupamento médio (Clustering coefficient), quantidade de Componentes conexos fracos/fortes e Diâmetro da rede com tratamento robusto para grafos desconectados).
 
 5. **Módulo de Exportação e Saídas (`src/export/exporter.py`):**
-   * **`.gexf` (Gephi):** Exportação enriquecida contendo as métricas de centralidade e os IDs de comunidades do Label Propagation embutidos em cada nó, ideal para visualização espacial avançada.
+   * **`.gexf` (Gephi):** Exportação enriquecida contendo as métricas de centralidade e os IDs de comunidades Louvain embutidos em cada nó, ideal para visualização espacial avançada.
    * **`.json` (Node-Link):** Formato padrão perfeito para consumo imediato por bibliotecas web interativas de visualização de redes, como *D3.js*, *Vis.js* ou *Sigma.js*.
    * **`.csv` (Metrics Table):** Planilha organizada contendo as estatísticas consolidadas de cada desenvolvedor participante para análise estatística ou plotagem rápida.
 
@@ -296,7 +296,7 @@ fastapi-graph-analysis/
 
 * **FastAPI (Repositório Alvo):** [https://github.com/encode/fastapi](https://github.com/encode/fastapi)
 * **Gephi (Software de Visualização):** [https://gephi.org/](https://gephi.org/)
-* **PyGithub (Integração com a API do GitHub):** [https://pygithub.readthedocs.io/](https://pygithub.readthedocs.io/)
+* **NetworkX (Análise de Redes em Python):** [https://networkx.org/](https://networkx.org/)
 * **D3.js (Visualizações Interativas):** [https://d3js.org/](https://d3js.org/)
 
 ---
